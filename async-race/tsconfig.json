@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "module": "Node16",
+    "target": "es6",
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "outDir": "./dist",
+    "skipLibCheck": true,
+    "removeComments": true,
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}
