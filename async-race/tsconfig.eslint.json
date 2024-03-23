@@ -4,6 +4,8 @@
     ".eslintrc.json",
     "webpack.config.js",
     "src/**/*.ts",
-    "src/**/*.js"
+    "src/**/*.js",
+    "src/components",
+    "src/custom.d.ts"
   ]
 }

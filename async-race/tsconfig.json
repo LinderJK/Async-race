@@ -10,6 +10,7 @@
     "outDir": "./dist",
     "skipLibCheck": true,
     "removeComments": true,
+    "moduleResolution": "Node"
   },
   "exclude": [
     "node_modules",
