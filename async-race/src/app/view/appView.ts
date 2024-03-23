@@ -10,7 +10,7 @@ class AppView {
 
     mainPageMap;
 
-    garageContainer;
+    appGarageDiv;
 
     garage;
 
@@ -20,15 +20,15 @@ class AppView {
         this.garage = new Garage();
         this.winners = new Winners();
         this.mainPageMap = this.mainPage.map;
-        this.garageContainer = this.mainPageMap.get('app-garage');
+        this.appGarageDiv = this.mainPageMap.get('app-garage');
     }
 
     drawGarage(data: CarData) {
-        if (!this.garageContainer) {
+        if (!this.appGarageDiv) {
             console.error('Garage container not found');
             return;
         }
-        this.garage.draw(data, this.garageContainer.element);
+        this.garage.draw(data, this.appGarageDiv);
     }
 
     // drawWinders() {}
