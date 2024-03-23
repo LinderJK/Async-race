@@ -2,14 +2,18 @@
   "root": true,
   "env": {
     "browser": true,
-    "es2021": true
+    "es6": true,
+    "node": true
   },
   "extends": [
     "airbnb-base",
-    "airbnb-typescript/base"
+    "airbnb-typescript/base",
+    "plugin:prettier/recommended",
+    "prettier"
   ],
   "plugins": [
-    "@typescript-eslint"
+    "@typescript-eslint",
+    "prettier"
   ],
   "parserOptions": {
     "parser": "@typescript-eslint/parser",
@@ -17,6 +21,12 @@
   },
   "rules": {
     "no-console": "off",
-    "@typescript-eslint/no-explicit-any": 2
+    "@typescript-eslint/no-explicit-any": 2,
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "devDependencies": true
+      }
+    ]
   }
 }

@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "module": "Node16",
+    "module": "ES6",
     "target": "es6",
     "sourceMap": true,
     "esModuleInterop": true,
@@ -12,6 +12,6 @@
     "removeComments": true,
   },
   "exclude": [
-    "node_modules"
+    "node_modules",
   ]
 }
