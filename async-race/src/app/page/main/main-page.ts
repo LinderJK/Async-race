@@ -1,5 +1,5 @@
 import './main-page.scss';
-import { div, h1, nav } from '../../Components/BaseComponents';
+import { div, h1, nav } from '../components/BaseComponents';
 
 const mainPage = () => {
     const content = div(
