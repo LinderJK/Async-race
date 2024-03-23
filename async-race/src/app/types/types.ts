@@ -40,3 +40,56 @@ export interface IComponent {
 export type PageMap = Map<string, IComponent | undefined> | undefined;
 
 export type HandlerFn = (evt: Event) => void;
+
+export interface IApplication {
+    view: IAppView;
+    app?: IApplication;
+    controller: IAppController;
+
+    start(): void;
+
+    // getApplication(): IApplication;
+}
+
+export interface IAppView {
+    root: HTMLElement | null;
+    mainPage: {
+        element: HTMLElement;
+        map: Map<string, IComponent>;
+    };
+
+    drawGarage(data: CarData): void;
+
+    buildPage(): void;
+}
+
+export interface IAppController {
+    app: IApplication;
+    garageData: CarData;
+
+    getGarage(): CarData;
+
+    start(): void;
+}
+
+export type CarData = {
+    name: string;
+    color: string;
+    id: number;
+}[];
+
+export type CallbackFunction = (data: ResponseData) => void;
+
+export type ResponseData = CarData;
+
+export enum RequestMethod {
+    GET = 0,
+    POST,
+    PUT,
+    DELETE,
+    PATCH,
+    ALL,
+    OPTIONS,
+    HEAD,
+    SEARCH,
+}
