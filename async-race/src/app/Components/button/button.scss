@@ -1,0 +1,18 @@
+.button {
+  //custom styles
+  color: white;
+  background-color: #977c5e;
+  border-color: #020100;
+
+  &:hover {
+    background-color: #efbd63;
+    border-color: #3c2907;
+  }
+
+  &:disabled {
+    background-color: inherit;
+    border-color: #3c2907;
+    color: #3c2907;
+  }
+
+}
