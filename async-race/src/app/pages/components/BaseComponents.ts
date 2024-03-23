@@ -1,5 +1,5 @@
 import Button from './button/button';
-import type { HandlerFn, IComponent } from '../types/types';
+import type { HandlerFn, IComponent } from '../../types/types';
 import Component from './Component';
 // import Input from './input/input';
 

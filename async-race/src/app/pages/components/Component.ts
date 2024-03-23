@@ -1,4 +1,4 @@
-import { IComponent } from '../types/types';
+import { IComponent } from '../../types/types';
 
 interface IComponentConstructor {
     tagName?: keyof HTMLElementTagNameMap | string;
