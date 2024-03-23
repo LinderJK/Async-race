@@ -3,7 +3,7 @@ import { div, h1, nav } from '../components/BaseComponents';
 
 const mainPage = () => {
     const content = div(
-        'container-fluid p-0 mx-2 background-body',
+        'container-fluid p-0 background-body',
         div(
             'app-content',
             nav(
