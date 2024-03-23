@@ -72,3 +72,21 @@ export const nav = (className: string, ...children: IComponent[]) =>
 //         type,
 //         placeholder,
 //     });
+
+export const image = (
+    className: string,
+    src: string,
+    alt: string,
+    ...children: IComponent[]
+) =>
+    new Component(
+        {
+            tagName: 'img',
+            className,
+            attributes: {
+                src,
+                alt,
+            },
+        },
+        ...children
+    );
