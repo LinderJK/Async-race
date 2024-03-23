@@ -1,6 +1,7 @@
 import './index.html';
 import 'normalize.css';
 import './stylesheets/main.scss';
+import App from './app/app';
 
-const root = document.querySelector('#root');
-console.log(root, 'root');
+const app = new App();
+app.start();
