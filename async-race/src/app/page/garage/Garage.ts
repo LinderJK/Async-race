@@ -37,7 +37,7 @@ class Garage {
 
     // eslint-disable-next-line class-methods-use-this
     private createCar(carData: CarsData[number]) {
-        const { name } = carData;
+        const { name, id } = carData;
         const car = div(
             'car',
             div(
@@ -60,6 +60,7 @@ class Garage {
                 )
             )
         );
+        car.setAttributes({ id: `${id}` });
         // car.setTextContent(`${name}, ${id},   ${color}`);
         return car;
     }
@@ -102,6 +103,8 @@ class Garage {
         // const color = colorElement.getValue();
         // console.log(color);
     }
+
+    // async deleteCarHandler() {}
 
     // getGarageMap() {
     //     return this.garage.map.get('color-car').value;
