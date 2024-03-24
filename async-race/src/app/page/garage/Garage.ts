@@ -1,24 +1,42 @@
 import CarSvg from './assets/car.svg';
 import FlagSvg from './assets/flag.svg';
-import { CarData, IComponent } from '../../types/types';
+import {
+    CarsData,
+    ComponentsMap,
+    IAppLoader,
+    IComponent,
+    InputComponent,
+} from '../../types/types';
 import './garage.scss';
-import { button, div, h1, image, p } from '../components/BaseComponents';
+import { button, div, h1, image, input, p } from '../components/BaseComponents';
 
 class Garage {
-    draw(data: CarData, container: IComponent) {
-        const garage = this.createGarage(data);
-        const carlist = garage.map.get('car-list');
+    loader;
 
-        data.forEach((carData) => {
-            const carElement = this.createCar(carData);
-            carlist?.append(carElement);
-        });
+    garage = this.createGarage();
 
-        container.append(garage.element);
+    inputs: ComponentsMap;
+
+    carlist: IComponent | undefined;
+
+    constructor(loader: IAppLoader) {
+        this.loader = loader;
+        this.inputs = this.garage.map.get('config')?.getAllChildrenMap();
+        this.carlist = this.garage.map.get('car-list');
     }
 
+    draw(data: CarsData) {
+        data.forEach((carData) => {
+            const carElement = this.createCar(carData);
+            this.carlist?.append(carElement);
+        });
+        return this.garage.element;
+    }
+
+    // drawCars(data) {}
+
     // eslint-disable-next-line class-methods-use-this
-    createCar(carData: CarData[number]) {
+    private createCar(carData: CarsData[number]) {
         const { name } = carData;
         const car = div(
             'car',
@@ -47,17 +65,47 @@ class Garage {
     }
 
     // eslint-disable-next-line class-methods-use-this
-    createGarage(data: CarData) {
+    private createGarage() {
         const content = div(
             'garage-container',
-            h1('garage-title', `Garage ${data.length}`),
-            div('car-list')
+            div(
+                'config',
+                input('color-car', 'color'),
+                input('name-car', 'text', 'add car name'),
+                button('add-car', 'Add Car', () => {
+                    this.addCarHandler();
+                })
+            ),
+            div('garage', h1('garage-title', `Garage`), div('car-list'))
         );
         return {
             element: content,
             map: content.getAllChildrenMap(),
         };
     }
+
+    async addCarHandler() {
+        const colorInput = this.inputs?.get('color-car') as InputComponent;
+        const nameInput = this.inputs?.get('name-car') as InputComponent;
+
+        const color = colorInput.getValue();
+        const name = nameInput.getValue();
+        console.log(color, name);
+
+        if (!colorInput || !nameInput || !this.carlist) {
+            console.error('error');
+            return;
+        }
+        const response = await this.loader.addCar(name, color);
+        const newCar = this.createCar(response);
+        this.carlist.append(newCar);
+        // const color = colorElement.getValue();
+        // console.log(color);
+    }
+
+    // getGarageMap() {
+    //     return this.garage.map.get('color-car').value;
+    // }
 }
 
 export default Garage;
