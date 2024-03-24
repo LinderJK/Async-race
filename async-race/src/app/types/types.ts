@@ -37,14 +37,18 @@ export interface IComponent {
     setTextContent(textContent: string): void;
 }
 
-export type PageMap = Map<string, IComponent | undefined> | undefined;
+export interface InputComponent extends IComponent {
+    getValue(): string;
+}
+
+export type ComponentsMap = Map<string, IComponent> | undefined;
 
 export type HandlerFn = (evt: Event) => void;
 
 export interface IApplication {
     view: IAppView;
     app?: IApplication;
-    controller: IAppController;
+    controller: IAppLoader;
 
     start(): void;
 
@@ -58,29 +62,28 @@ export interface IAppView {
         map: Map<string, IComponent>;
     };
 
-    drawGarage(data: CarData): void;
+    drawGarage(data: CarsData): void;
 
     buildPage(): void;
 }
 
-export interface IAppController {
-    app: IApplication;
-    garageData: CarData;
+export interface IAppLoader {
+    load(callback: CallbackFunction): Promise<void>;
 
-    getGarage(): CarData;
-
-    start(): void;
+    addCar(name: string, color: string): Promise<CarData>;
 }
 
 export type CarData = {
     name: string;
     color: string;
     id: number;
-}[];
+};
+
+export type CarsData = Array<CarData>;
 
 export type CallbackFunction = (data: ResponseData) => void;
 
-export type ResponseData = CarData;
+export type ResponseData = CarsData;
 
 export enum RequestMethod {
     GET = 0,
