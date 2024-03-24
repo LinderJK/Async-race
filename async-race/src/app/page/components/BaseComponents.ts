@@ -1,6 +1,7 @@
 import Button from './button/button';
 import type { HandlerFn, IComponent } from '../../types/types';
 import Component from './Component';
+import Input from './input/input';
 // import Input from './input/input';
 
 export const div = (className: string, ...children: IComponent[]) =>
@@ -60,18 +61,18 @@ export const nav = (className: string, ...children: IComponent[]) =>
         ...children
     );
 
-// export const input = (
-//     className: string,
-//     type: string,
-//     placeholder = '',
-//     id = ''
-// ) =>
-//     new Input({
-//         className,
-//         id,
-//         type,
-//         placeholder,
-//     });
+export const input = (
+    className: string,
+    type: string,
+    placeholder = '',
+    id = ''
+) =>
+    new Input({
+        className,
+        id,
+        type,
+        placeholder,
+    });
 
 export const image = (
     className: string,
