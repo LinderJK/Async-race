@@ -1,8 +1,8 @@
-import { CallbackFunction, ResponseData } from '../types/data';
+import { CarData, CarsData } from '../types/data-types';
 
 class Loader {
     // eslint-disable-next-line class-methods-use-this
-    async load(callback: CallbackFunction) {
+    async load(): Promise<CarsData> {
         try {
             const response = await fetch('http://localhost:3000/garage');
             if (!response.ok) {
@@ -10,7 +10,7 @@ class Loader {
             }
             const data = await response.json();
             console.log(data);
-            callback(data);
+            return data;
         } catch (err) {
             console.error(err);
             throw err;
@@ -22,7 +22,7 @@ class Loader {
     //     console.log('add car');
     // }
     // eslint-disable-next-line class-methods-use-this
-    async createCar(name: string, color: string): Promise<ResponseData> {
+    async createCar(name: string, color: string): Promise<CarData> {
         try {
             const response = await fetch('http://localhost:3000/garage', {
                 method: 'POST',

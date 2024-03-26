@@ -1,18 +1,15 @@
-import mainPage from '../page/main/main-page';
+import mainPageView from '../page/main/main-page-view';
 import Garage from '../components/garage/Garage';
 import Winners from '../components/winers/Winers';
 import Loader from '../services/loader';
-import { ILoader } from '../types/components';
-import { CarsData, ResponseData } from '../types/data';
+import { CarsData, ILoader } from '../types/data-types';
 
 class AppManager {
     root: HTMLElement | null = document.querySelector('#root');
 
-    mainPageComponent = mainPage();
+    mainPageView = mainPageView();
 
-    mainPageMap;
-
-    mainPageContainer;
+    mainContainerChildrenMap;
 
     private garage;
 
@@ -21,20 +18,19 @@ class AppManager {
     private readonly loader: ILoader;
 
     constructor() {
-        this.mainPageMap = this.mainPageComponent.map;
-        this.mainPageContainer = this.mainPageMap.get('main');
+        this.mainContainerChildrenMap = this.mainPageView.map.get('main');
         this.loader = new Loader();
         this.garage = new Garage(this.loader);
         this.winners = new Winners();
     }
 
     renderGarage(data: CarsData) {
-        if (!this.mainPageContainer) {
+        if (!this.mainContainerChildrenMap) {
             console.error('Garage container not found');
             return;
         }
         const garageView = this.garage.draw(data);
-        this.mainPageContainer.append(garageView);
+        this.mainContainerChildrenMap.append(garageView);
     }
 
     clearRoot(): void {
@@ -52,13 +48,10 @@ class AppManager {
             console.error('dont find root');
             return;
         }
-        this.root.append(this.mainPageComponent.element);
-        console.log(this.mainPageComponent.map);
-        this.loader.load((data: ResponseData) =>
-            this.renderGarage(data as CarsData)
-        );
-
-        console.log(this.mainPageMap);
+        this.root.append(this.mainPageView.element);
+        this.loader.load().then((r) => {
+            this.renderGarage(r);
+        });
     }
 }
 

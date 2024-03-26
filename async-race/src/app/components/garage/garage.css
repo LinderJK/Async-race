@@ -16,39 +16,4 @@
   gap: 10px;
 }
 
-.car__nav {
-  display: flex;
-  flex-direction: row;
-  gap: 20px;
-  height: 30px;
-}
-.car__nav p {
-  margin: 0;
-  font-size: 1rem;
-  color: #fff;
-}
-.car-view {
-  display: flex;
-  flex-direction: row;
-  border-bottom: 2px dashed #fff;
-}
-.car-view__draw {
-  display: flex;
-  flex: 1;
-  flex-direction: row;
-  justify-content: space-between;
-}
-
-.car-image,
-.flag-image {
-  width: 200px;
-  height: 100px;
-  overflow: hidden;
-}
-
-.image {
-  width: 100%;
-  height: 100%;
-}
-
 /*# sourceMappingURL=garage.css.map */

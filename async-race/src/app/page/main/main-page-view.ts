@@ -1,7 +1,7 @@
 import './main-page.scss';
 import { div, h1, nav } from '../components/BaseComponents';
 
-const mainPage = () => {
+const mainPageView = () => {
     const content = div(
         'container-fluid p-0 app-container',
         div(
@@ -16,4 +16,4 @@ const mainPage = () => {
     return { element: content.getElement(), map: content.getAllChildrenMap() };
 };
 
-export default mainPage;
+export default mainPageView;

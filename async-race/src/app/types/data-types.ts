@@ -1,5 +1,3 @@
-export type HandlerFn = (evt: Event) => void;
-
 export type CarData = {
     name: string;
     color: string;
@@ -8,9 +6,17 @@ export type CarData = {
 
 export type CarsData = Array<CarData>;
 
-export type CallbackFunction = (data: ResponseData) => void;
-
 export type ResponseData = CarsData | CarData;
+
+export interface ILoader {
+    load(): Promise<CarsData>;
+
+    createCar(name: string, color: string): Promise<CarData>;
+}
+
+export type HandlerFn = (evt: Event) => void;
+
+// export type CallbackFunction = (data: ResponseData) => void;
 
 export enum RequestMethod {
     GET = 0,

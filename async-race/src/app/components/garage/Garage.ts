@@ -1,94 +1,110 @@
-import CarSvg from '../../../assets/car.svg';
-import FlagSvg from '../../../assets/flag.svg';
 import './garage.scss';
-import {
-    button,
-    div,
-    h1,
-    image,
-    input,
-    p,
-} from '../../page/components/BaseComponents';
-import {
-    ComponentMap,
-    IComponent,
-    IInput,
-    ILoader,
-} from '../../types/components';
-import { CarData, CarsData } from '../../types/data';
+import { button, div, h1, input } from '../../page/components/BaseComponents';
+import { ComponentMap, IComponent, IInput } from '../../types/components-types';
+import { CarData, CarsData, ILoader } from '../../types/data-types';
+import Car from '../car/Car';
 
 class Garage {
     loader;
 
-    garage = this.createGarageView();
+    garageView = this.createGarageView();
 
-    inputs: ComponentMap;
+    inputs: ComponentMap = this.garageView.map
+        .get('config')
+        ?.getAllChildrenMap();
 
-    carList: IComponent | undefined;
+    carList: IComponent | undefined = this.garageView.map.get('car-list');
+
+    carsNumbers: Promise<number>;
 
     constructor(loader: ILoader) {
         this.loader = loader;
-        this.inputs = this.garage.map.get('config')?.getAllChildrenMap();
-        this.carList = this.garage.map.get('car-list');
+        this.carsNumbers = this.getCarsNumbers();
+        this.updateView();
+    }
+
+    updateView() {
+        this.garageView.map
+            .get('garage-title')
+            ?.setTextContent(`Garage ${this.carsNumbers}`);
+    }
+
+    getCarsNumbers(): Promise<number> {
+        return this.loader
+            .load()
+            .then((r) => {
+                console.log(r, 'LENGTH', r.length);
+                return r.length;
+            })
+            .catch((error) => {
+                console.log(error);
+                return 0;
+            });
     }
 
     draw(data: CarsData) {
         data.forEach((carData) => {
-            const carElement = this.createCarView(carData);
-            this.carList?.append(carElement);
+            const car = new Car(carData);
+            const carView = car.createCarView();
+            this.carList?.append(carView);
         });
-        return this.garage.element;
+        return this.garageView.element;
     }
 
-    async handleAddCar() {
+    handleAddCar() {
         const colorInput = this.inputs?.get('color-car') as IInput;
         const nameInput = this.inputs?.get('name-car') as IInput;
 
         const color = colorInput.getValue();
         const name = nameInput.getValue();
         console.log(color, name);
-
         if (!colorInput || !nameInput || !this.carList) {
-            console.error('error');
-            return;
+            console.error('error color input is not valid');
         }
-        const response = await this.loader.createCar(name, color);
-        const newCar = this.createCarView(response as CarData);
-        this.carList.append(newCar);
-
-        // const color = colorElement.getValue();
-        // console.log(color);
+        this.loader
+            .createCar(name, color)
+            .then((r) => {
+                const car = new Car(r as CarData);
+                const carView = car.createCarView();
+                if (this.carList) {
+                    this.carList.append(carView);
+                }
+                console.log(r);
+            })
+            .catch((error) => {
+                console.error('Error creating car:', error);
+            });
     }
 
     // eslint-disable-next-line class-methods-use-this
-    private createCarView(carData: CarsData[number]) {
-        const { name, id } = carData;
-        const car = div(
-            'car',
-            div(
-                'car__nav',
-                button('nav__select-car button-select', 'Select', () => {}),
-                button('nav__remove-car button-remove', 'Remove', () => {}),
-                p('nav__name-car', `${name}`)
-            ),
-            div(
-                'car-view my-2',
-                div(
-                    'car-view__control',
-                    button('a-btn', 'A', () => {}),
-                    button('b-btn', 'B', () => {})
-                ),
-                div(
-                    'car-view__draw',
-                    div('car-image', image('image', CarSvg, 'car-svg')),
-                    div('flag-image', image('flag-image', FlagSvg, 'flag-svg'))
-                )
-            )
-        );
-        car.setAttributes({ id: `${id}` });
-        // car.setTextContent(`${name}, ${id},   ${color}`);
-        return car;
-    }
+    // private createCarView(carData: CarsData[number]) {
+    //     const { name, id } = carData;
+    //     const car = div(
+    //         'car',
+    //         div(
+    //             'car__nav',
+    //             button('nav__select-car button-select', 'Select', () => {}),
+    //             button('nav__remove-car button-remove', 'Remove', () => {}),
+    //             p('nav__name-car', `${name}`)
+    //         ),
+    //         div(
+    //             'car-view my-2',
+    //             div(
+    //                 'car-view__control',
+    //                 button('a-btn', 'A', () => {}),
+    //                 button('b-btn', 'B', () => {})
+    //             ),
+    //             div(
+    //                 'car-view__draw',
+    //                 div('car-image', image('image', CarSvg, 'car-svg')),
+    //                 div('flag-image', image('flag-image', FlagSvg, 'flag-svg'))
+    //             )
+    //         )
+    //     );
+    //     car.setAttributes({ id: `${id}` });
+    //     // car.setTextContent(`${name}, ${id},   ${color}`);
+    //     return car;
+    // }
 
     // eslint-disable-next-line class-methods-use-this
     private createGarageView() {
@@ -102,7 +118,11 @@ class Garage {
                     this.handleAddCar();
                 })
             ),
-            div('garage', h1('garage-title', `Garage`), div('car-list'))
+            div(
+                'garage',
+                h1('garage-title', `Garage ${this.carsNumbers}`),
+                div('car-list')
+            )
         );
         return {
             element: content,

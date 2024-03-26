@@ -1,5 +1,3 @@
-import { CallbackFunction, ResponseData } from './data';
-
 export interface IComponent {
     element: HTMLElement;
     children: IComponent[];
@@ -44,9 +42,3 @@ export interface IInput extends IComponent {
 }
 
 export type ComponentMap = Map<string, IComponent> | undefined;
-
-export interface ILoader {
-    load(callback: CallbackFunction): Promise<void>;
-
-    createCar(name: string, color: string): Promise<ResponseData>;
-}
