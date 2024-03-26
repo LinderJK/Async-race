@@ -1,42 +1,67 @@
-import CarSvg from './assets/car.svg';
-import FlagSvg from './assets/flag.svg';
-import {
-    CarsData,
-    ComponentsMap,
-    IAppLoader,
-    IComponent,
-    InputComponent,
-} from '../../types/types';
+import CarSvg from '../../../assets/car.svg';
+import FlagSvg from '../../../assets/flag.svg';
 import './garage.scss';
-import { button, div, h1, image, input, p } from '../components/BaseComponents';
+import {
+    button,
+    div,
+    h1,
+    image,
+    input,
+    p,
+} from '../../page/components/BaseComponents';
+import {
+    ComponentMap,
+    IComponent,
+    IInput,
+    ILoader,
+} from '../../types/components';
+import { CarData, CarsData } from '../../types/data';
 
 class Garage {
     loader;
 
-    garage = this.createGarage();
+    garage = this.createGarageView();
 
-    inputs: ComponentsMap;
+    inputs: ComponentMap;
 
-    carlist: IComponent | undefined;
+    carList: IComponent | undefined;
 
-    constructor(loader: IAppLoader) {
+    constructor(loader: ILoader) {
         this.loader = loader;
         this.inputs = this.garage.map.get('config')?.getAllChildrenMap();
-        this.carlist = this.garage.map.get('car-list');
+        this.carList = this.garage.map.get('car-list');
     }
 
     draw(data: CarsData) {
         data.forEach((carData) => {
-            const carElement = this.createCar(carData);
-            this.carlist?.append(carElement);
+            const carElement = this.createCarView(carData);
+            this.carList?.append(carElement);
         });
         return this.garage.element;
     }
 
-    // drawCars(data) {}
+    async handleAddCar() {
+        const colorInput = this.inputs?.get('color-car') as IInput;
+        const nameInput = this.inputs?.get('name-car') as IInput;
+
+        const color = colorInput.getValue();
+        const name = nameInput.getValue();
+        console.log(color, name);
+
+        if (!colorInput || !nameInput || !this.carList) {
+            console.error('error');
+            return;
+        }
+        const response = await this.loader.createCar(name, color);
+        const newCar = this.createCarView(response as CarData);
+        this.carList.append(newCar);
+
+        // const color = colorElement.getValue();
+        // console.log(color);
+    }
 
     // eslint-disable-next-line class-methods-use-this
-    private createCar(carData: CarsData[number]) {
+    private createCarView(carData: CarsData[number]) {
         const { name, id } = carData;
         const car = div(
             'car',
@@ -66,7 +91,7 @@ class Garage {
     }
 
     // eslint-disable-next-line class-methods-use-this
-    private createGarage() {
+    private createGarageView() {
         const content = div(
             'garage-container',
             div(
@@ -74,7 +99,7 @@ class Garage {
                 input('color-car', 'color'),
                 input('name-car', 'text', 'add car name'),
                 button('add-car', 'Add Car', () => {
-                    this.addCarHandler();
+                    this.handleAddCar();
                 })
             ),
             div('garage', h1('garage-title', `Garage`), div('car-list'))
@@ -83,25 +108,6 @@ class Garage {
             element: content,
             map: content.getAllChildrenMap(),
         };
-    }
-
-    async addCarHandler() {
-        const colorInput = this.inputs?.get('color-car') as InputComponent;
-        const nameInput = this.inputs?.get('name-car') as InputComponent;
-
-        const color = colorInput.getValue();
-        const name = nameInput.getValue();
-        console.log(color, name);
-
-        if (!colorInput || !nameInput || !this.carlist) {
-            console.error('error');
-            return;
-        }
-        const response = await this.loader.addCar(name, color);
-        const newCar = this.createCar(response);
-        this.carlist.append(newCar);
-        // const color = colorElement.getValue();
-        // console.log(color);
     }
 
     // async deleteCarHandler() {}

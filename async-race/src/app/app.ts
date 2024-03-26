@@ -1,17 +1,17 @@
-import AppView from './view/appView';
+import AppManager from './manager/AppManager';
 
 class App {
     static app: App;
 
-    view: AppView;
+    manager: AppManager;
 
     constructor() {
         App.app = this;
-        this.view = new AppView();
+        this.manager = new AppManager();
     }
 
     start() {
-        this.view.buildPage();
+        this.manager.start();
     }
 
     static getApplication() {
