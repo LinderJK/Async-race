@@ -104,6 +104,29 @@ class Loader {
             throw error;
         }
     }
+
+    static async updateCar(id: number, name: string, color: string) {
+        try {
+            const response = await fetch(`http://localhost:3000/garage/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name, color }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to add car');
+            }
+
+            const data = await response.json();
+            console.log('Car update success:', data);
+            return data;
+        } catch (error) {
+            console.error('Error update car:', error);
+            throw error;
+        }
+    }
 }
 
 export default Loader;
