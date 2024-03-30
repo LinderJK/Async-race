@@ -67,9 +67,6 @@ class Garage {
             if (this.currentCar) {
                 // this.currentCar.updateView();
             }
-            // const selectedCarData = await Loader.getCar(selectedCarId);
-            // Теперь у вас есть данные выбранной машины, можно их использовать
-            // console.log(selectedCarData);
         };
 
         document.addEventListener('deleteCar', deleteCarHandler);
