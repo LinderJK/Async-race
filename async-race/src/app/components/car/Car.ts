@@ -91,6 +91,30 @@ class Car {
         // car.setTextContent(`${name}, ${id},   ${color}`);
         return car;
     }
+
+    get Id() {
+        return this.id;
+    }
+
+    set Id(id: number) {
+        this.id = id;
+    }
+
+    get Name() {
+        return this.name;
+    }
+
+    set Name(name: string) {
+        this.name = name;
+    }
+
+    get Color() {
+        return this.color;
+    }
+
+    set Color(color: string) {
+        this.color = color;
+    }
 }
 
 export default Car;
