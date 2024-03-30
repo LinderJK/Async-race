@@ -13,11 +13,8 @@ class AppManager {
 
     private winners;
 
-    // private readonly loader: ILoader;
-
     constructor() {
         this.mainContainer = this.mainPageView.map.get('main');
-        // this.loader = new Loader();
         this.garage = new Garage();
         this.winners = new Winners();
     }
