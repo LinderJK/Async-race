@@ -24,6 +24,8 @@ class Garage {
 
     carsNumbers: number = 0;
 
+    currentCar: Car | undefined = undefined;
+
     carsData: CarsData = [];
 
     currentPage = 1;
@@ -37,7 +39,41 @@ class Garage {
         this.title = this.view.map.get('garage-title')!;
         // this.loader = loader;
         this.updateView();
+        this.setupObserver();
+
         this.updatePaginationButtons();
+    }
+
+    setupObserver() {
+        const deleteCarHandler = async () => {
+            // this.getCarsData();
+            this.updateView();
+        };
+        const selectCarHandler: EventListener = (event: Event) => {
+            // const selectedCarId = event.detail.selectedCar;
+            // console.log(selectedCarId);
+
+            const customEvent = event as CustomEvent;
+            const { selectedCar } = customEvent.detail;
+
+            this.currentCar = selectedCar;
+            console.log(selectedCar, this.currentCar);
+            this.inputs
+                ?.get('color-car')
+                ?.setAttributes({ value: `${this.currentCar?.Color}` });
+            this.inputs
+                ?.get('name-car')
+                ?.setAttributes({ value: `${this.currentCar?.Name}` });
+            if (this.currentCar) {
+                // this.currentCar.updateView();
+            }
+            // const selectedCarData = await Loader.getCar(selectedCarId);
+            // Теперь у вас есть данные выбранной машины, можно их использовать
+            // console.log(selectedCarData);
+        };
+
+        document.addEventListener('deleteCar', deleteCarHandler);
+        document.addEventListener('selectCar', selectCarHandler);
     }
 
     async updateView() {
