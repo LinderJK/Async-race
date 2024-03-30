@@ -139,15 +139,19 @@ class Garage {
         }
         try {
             const carData = await Loader.addCar(name, color);
-            const car = new Car(carData);
-            const carView = car.createView();
-            if (this.carList) {
-                this.carList.append(carView);
+            if (this.carsNumbers <= this.carsPerPage) {
+                const car = new Car(carData);
+                const carView = car.createView();
+                if (this.carList) {
+                    this.carList.append(carView);
+                }
             }
+
             console.log(carData);
         } catch (error) {
             console.error('Error creating car:', error);
         }
+        this.updateView();
     }
 
     async handleUpdateCar() {
@@ -172,7 +176,7 @@ class Garage {
         } catch (error) {
             console.error('Error update car:', error);
         }
-        this.updateView();
+        await this.updateView();
     }
 
     async createRandomCars() {
@@ -196,7 +200,7 @@ class Garage {
 
         await Promise.all(promises);
         console.log(newCars);
-        this.updateView();
+        await this.updateView();
     }
 
     private createGarageView() {
