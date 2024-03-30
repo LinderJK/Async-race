@@ -10,6 +10,8 @@ import { ComponentMap, IComponent, IInput } from '../../types/components-types';
 import { CarsData } from '../../types/data-types';
 import Car from '../car/Car';
 import Loader from '../../services/loader';
+import getRandomColor from '../../utils/getRandomColor';
+import getRandomCarName from '../../utils/getRandomCarName';
 
 class Garage {
     // loader;
@@ -31,6 +33,8 @@ class Garage {
     currentPage = 1;
 
     carsPerPage = 4;
+
+    carToCreate = 100;
 
     constructor() {
         this.view = this.createGarageView();
@@ -189,6 +193,37 @@ class Garage {
         this.updateView();
     }
 
+    async createRandomCars() {
+        const newCars = [];
+
+        // console.log(color, name);
+
+        for (let index = 0; index < this.carToCreate; index += 1) {
+            const color = getRandomColor();
+            const name = getRandomCarName();
+            const car = { color, name };
+            newCars.push(car);
+        }
+
+        const promises = newCars.map(async (car) => {
+            try {
+                const carData = await Loader.addCar(car.name, car.color);
+                // const carInstance = new Car(carData);
+                // const carView = carInstance.createView();
+                // if (this.carList) {
+                //     this.carList.append(carView);
+                // }
+                console.log(carData);
+            } catch (error) {
+                console.error('Error creating car:', error);
+            }
+        });
+
+        await Promise.all(promises);
+        console.log(newCars);
+        this.updateView();
+    }
+
     // eslint-disable-next-line class-methods-use-this
     // private createCarView(carData: CarsData[number]) {
     //     const { name, id } = carData;
@@ -239,6 +274,9 @@ class Garage {
                 h1('garage-title', `Garage ${this.carsNumbers}`),
                 div('car-list')
             ),
+            button('generate-car', 'Add 100 cars', () => {
+                this.createRandomCars();
+            }),
             div('pagination-container')
         );
         return {
