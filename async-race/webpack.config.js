@@ -30,7 +30,7 @@ const baseConfig = {
             },
             {
                 test: /\.svg/,
-                type: 'asset/inline',
+                type: 'asset/resource',
             },
         ],
     },
