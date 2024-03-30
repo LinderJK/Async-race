@@ -1,57 +1,113 @@
 import './garage.scss';
-import { button, div, h1, input } from '../../page/components/BaseComponents';
+import {
+    button,
+    div,
+    h1,
+    input,
+    p,
+} from '../../page/components/BaseComponents';
 import { ComponentMap, IComponent, IInput } from '../../types/components-types';
-import { CarData, CarsData, ILoader } from '../../types/data-types';
+import { CarsData } from '../../types/data-types';
 import Car from '../car/Car';
+import Loader from '../../services/loader';
 
 class Garage {
-    loader;
+    // loader;
 
-    garageView = this.createGarageView();
+    view = this.createGarageView();
 
-    inputs: ComponentMap = this.garageView.map
-        .get('config')
-        ?.getAllChildrenMap();
+    inputs: ComponentMap;
 
-    carList: IComponent | undefined = this.garageView.map.get('car-list');
+    carList: IComponent;
 
-    carsNumbers: Promise<number>;
+    title: IComponent;
 
-    constructor(loader: ILoader) {
-        this.loader = loader;
-        this.carsNumbers = this.getCarsNumbers();
+    carsNumbers: number = 0;
+
+    carsData: CarsData = [];
+
+    currentPage = 1;
+
+    carsPerPage = 4;
+
+    constructor() {
+        this.view = this.createGarageView();
+        this.inputs = this.view.map.get('config')?.getAllChildrenMap();
+        this.carList = this.view.map.get('car-list')!;
+        this.title = this.view.map.get('garage-title')!;
+        // this.loader = loader;
         this.updateView();
+        this.updatePaginationButtons();
     }
 
-    updateView() {
-        this.garageView.map
-            .get('garage-title')
-            ?.setTextContent(`Garage ${this.carsNumbers}`);
+    async updateView() {
+        const data = await Loader.loadGarageData();
+        this.carsData = data;
+        this.carsNumbers = this.carsData.length;
+
+        const startIndex = (this.currentPage - 1) * this.carsPerPage;
+        const endIndex = startIndex + this.carsPerPage;
+        const carsToShow = this.carsData.slice(startIndex, endIndex);
+
+        this.title.setTextContent(`Garage ${this.carsNumbers}`);
+        this.carList?.deleteChildren();
+        this.drawCars(carsToShow);
+        this.updatePaginationButtons();
+        console.log(this.carsData, data);
+        console.log(this.currentPage, startIndex, endIndex, carsToShow);
     }
 
-    getCarsNumbers(): Promise<number> {
-        return this.loader
-            .load()
-            .then((r) => {
-                console.log(r, 'LENGTH', r.length);
-                return r.length;
-            })
-            .catch((error) => {
-                console.log(error);
-                return 0;
-            });
+    updatePaginationButtons() {
+        const totalPages = Math.ceil(this.carsData.length / this.carsPerPage);
+        console.log(totalPages, 'total pages');
+        const prevButton = button('prev-page', 'Prev', () => {
+            if (this.currentPage > 1) {
+                this.currentPage -= 1;
+                this.updateView();
+            }
+        });
+        const nextButton = button('next-page', 'Next', () => {
+            if (this.currentPage < totalPages) {
+                this.currentPage += 1;
+                this.updateView();
+            }
+        });
+
+        const pagesInfo = p(
+            'pages-info',
+            `${this.currentPage} / ${totalPages}`
+        );
+
+        const paginationContainer = this.view.map?.get('pagination-container');
+        paginationContainer?.deleteChildren();
+        paginationContainer?.append(prevButton);
+        paginationContainer?.append(pagesInfo);
+        paginationContainer?.append(nextButton);
     }
 
-    draw(data: CarsData) {
+    // getCarsNumbers(): Promise<number> {
+    //     return this.loader
+    //         .load()
+    //         .then((r) => {
+    //             console.log(r, 'LENGTH', r.length);
+    //             return r.length;
+    //         })
+    //         .catch((error) => {
+    //             console.log(error);
+    //             return 0;
+    //         });
+    // }
+
+    drawCars(data: CarsData) {
         data.forEach((carData) => {
             const car = new Car(carData);
-            const carView = car.createCarView();
-            this.carList?.append(carView);
+            // const carView = car.createCarView();
+            this.carList?.append(car.view);
         });
-        return this.garageView.element;
+        // return this.view.element;
     }
 
-    handleAddCar() {
+    async handleAddCar() {
         const colorInput = this.inputs?.get('color-car') as IInput;
         const nameInput = this.inputs?.get('name-car') as IInput;
 
@@ -61,19 +117,17 @@ class Garage {
         if (!colorInput || !nameInput || !this.carList) {
             console.error('error color input is not valid');
         }
-        this.loader
-            .createCar(name, color)
-            .then((r) => {
-                const car = new Car(r as CarData);
-                const carView = car.createCarView();
-                if (this.carList) {
-                    this.carList.append(carView);
-                }
-                console.log(r);
-            })
-            .catch((error) => {
-                console.error('Error creating car:', error);
-            });
+        try {
+            const carData = await Loader.addCar(name, color);
+            const car = new Car(carData);
+            const carView = car.createView();
+            if (this.carList) {
+                this.carList.append(carView);
+            }
+            console.log(carData);
+        } catch (error) {
+            console.error('Error creating car:', error);
+        }
     }
 
     // eslint-disable-next-line class-methods-use-this
@@ -122,7 +176,8 @@ class Garage {
                 'garage',
                 h1('garage-title', `Garage ${this.carsNumbers}`),
                 div('car-list')
-            )
+            ),
+            div('pagination-container')
         );
         return {
             element: content,
