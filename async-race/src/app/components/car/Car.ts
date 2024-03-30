@@ -48,6 +48,15 @@ class Car {
         // console.log(car);
     }
 
+    async delete() {
+        try {
+            await Loader.deleteCar(this.id);
+            document.dispatchEvent(new Event('deleteCar'));
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     async engineSwitch() {
         if (this.nextEngineStatus === 'started') {
             this.params = await Loader.toggleEngine(
