@@ -44,6 +44,41 @@ class Loader {
             throw error;
         }
     }
+
+    static async getCar(id: number) {
+        try {
+            const response = await fetch(`http://localhost:3000/garage/${id}`);
+
+            if (!response.ok) {
+                throw new Error('Car not found');
+            }
+
+            return (await response.json()) as CarData;
+        } catch (error) {
+            console.error('Error fetching car:', error);
+            throw error;
+        }
+    }
+
+    static async deleteCar(id: number): Promise<void> {
+        try {
+            const response = await fetch(`http://localhost:3000/garage/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                // body: JSON.stringify({ name, color }),
+            });
+            console.log(response, 'delete card resp');
+
+            if (!response.ok) {
+                throw new Error('Car not found');
+            }
+        } catch (error) {
+            console.error('Error fetching car:', error);
+            throw error;
+        }
+    }
 }
 
 export default Loader;
