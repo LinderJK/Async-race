@@ -3,6 +3,7 @@ import { CarData } from '../../types/data-types';
 import { button, div, image, p } from '../../page/components/BaseComponents';
 import CarSvg from '../../../assets/car.svg';
 import FlagSvg from '../../../assets/flag.svg';
+import { IComponent } from '../../types/components-types';
 
 class Car {
     id: number;
@@ -11,14 +12,17 @@ class Car {
 
     name: string;
 
+    view: IComponent;
+
     constructor(data: CarData) {
         this.id = data.id;
+        this.view = this.createView();
         this.color = data.color;
         this.name = data.name;
     }
 
     // eslint-disable-next-line class-methods-use-this
-    createCarView() {
+    createView() {
         const car = div(
             'car',
             div(

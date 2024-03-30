@@ -2,7 +2,7 @@ import { CarData, CarsData } from '../types/data-types';
 
 class Loader {
     // eslint-disable-next-line class-methods-use-this
-    async load(): Promise<CarsData> {
+    static async loadGarageData(): Promise<CarsData> {
         try {
             const response = await fetch('http://localhost:3000/garage');
             if (!response.ok) {
@@ -22,7 +22,7 @@ class Loader {
     //     console.log('add car');
     // }
     // eslint-disable-next-line class-methods-use-this
-    async createCar(name: string, color: string): Promise<CarData> {
+    static async addCar(name: string, color: string): Promise<CarData> {
         try {
             const response = await fetch('http://localhost:3000/garage', {
                 method: 'POST',
@@ -36,7 +36,9 @@ class Loader {
                 throw new Error('Failed to add car');
             }
 
-            return await response.json();
+            const data = await response.json();
+            console.log(data, 'all cars');
+            return data;
         } catch (error) {
             console.error('Failed to add car:', error);
             throw error;
