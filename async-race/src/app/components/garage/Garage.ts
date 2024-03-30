@@ -6,7 +6,12 @@ import {
     input,
     p,
 } from '../../page/components/BaseComponents';
-import { ComponentMap, IComponent, IInput } from '../../types/components-types';
+import {
+    ComponentMap,
+    IComponent,
+    IInput,
+    PageView,
+} from '../../types/components-types';
 import { CarsData } from '../../types/data-types';
 import Car from '../car/Car';
 import Loader from '../../services/loader';
@@ -14,9 +19,7 @@ import getRandomColor from '../../utils/getRandomColor';
 import getRandomCarName from '../../utils/getRandomCarName';
 
 class Garage {
-    // loader;
-
-    view = this.createGarageView();
+    view: PageView;
 
     inputs: ComponentMap;
 
@@ -24,42 +27,39 @@ class Garage {
 
     title: IComponent;
 
+    carsData: CarsData = [];
+
     carsNumbers: number = 0;
 
     currentCar: Car | undefined = undefined;
-
-    carsData: CarsData = [];
 
     currentPage = 1;
 
     carsPerPage = 4;
 
-    carToCreate = 100;
+    carsToCreate = 100;
 
     constructor() {
         this.view = this.createGarageView();
+        if (!this.view.map) {
+            console.error('dont get garage view map');
+            throw new Error('dont get garage view map');
+        }
         this.inputs = this.view.map.get('config')?.getAllChildrenMap();
         this.carList = this.view.map.get('car-list')!;
         this.title = this.view.map.get('garage-title')!;
-        // this.loader = loader;
         this.updateView();
         this.setupObserver();
-
         this.updatePaginationButtons();
     }
 
     setupObserver() {
         const deleteCarHandler = async () => {
-            // this.getCarsData();
             this.updateView();
         };
         const selectCarHandler: EventListener = (event: Event) => {
-            // const selectedCarId = event.detail.selectedCar;
-            // console.log(selectedCarId);
-
             const customEvent = event as CustomEvent;
             const { selectedCar } = customEvent.detail;
-
             this.currentCar = selectedCar;
             console.log(selectedCar, this.currentCar);
             this.inputs
@@ -68,9 +68,6 @@ class Garage {
             this.inputs
                 ?.get('name-car')
                 ?.setAttributes({ value: `${this.currentCar?.Name}` });
-            if (this.currentCar) {
-                // this.currentCar.updateView();
-            }
         };
 
         document.addEventListener('deleteCar', deleteCarHandler);
@@ -122,26 +119,12 @@ class Garage {
         paginationContainer?.append(nextButton);
     }
 
-    // getCarsNumbers(): Promise<number> {
-    //     return this.loader
-    //         .load()
-    //         .then((r) => {
-    //             console.log(r, 'LENGTH', r.length);
-    //             return r.length;
-    //         })
-    //         .catch((error) => {
-    //             console.log(error);
-    //             return 0;
-    //         });
-    // }
-
     drawCars(data: CarsData) {
         data.forEach((carData) => {
             const car = new Car(carData);
             // const carView = car.createCarView();
             this.carList?.append(car.view);
         });
-        // return this.view.element;
     }
 
     async handleAddCar() {
@@ -185,7 +168,6 @@ class Garage {
                 name,
                 color
             );
-            // this.currentCar.update;
             console.log(carData);
         } catch (error) {
             console.error('Error update car:', error);
@@ -196,9 +178,7 @@ class Garage {
     async createRandomCars() {
         const newCars = [];
 
-        // console.log(color, name);
-
-        for (let index = 0; index < this.carToCreate; index += 1) {
+        for (let index = 0; index < this.carsToCreate; index += 1) {
             const color = getRandomColor();
             const name = getRandomCarName();
             const car = { color, name };
@@ -208,11 +188,6 @@ class Garage {
         const promises = newCars.map(async (car) => {
             try {
                 const carData = await Loader.addCar(car.name, car.color);
-                // const carInstance = new Car(carData);
-                // const carView = carInstance.createView();
-                // if (this.carList) {
-                //     this.carList.append(carView);
-                // }
                 console.log(carData);
             } catch (error) {
                 console.error('Error creating car:', error);
@@ -224,37 +199,6 @@ class Garage {
         this.updateView();
     }
 
-    // eslint-disable-next-line class-methods-use-this
-    // private createCarView(carData: CarsData[number]) {
-    //     const { name, id } = carData;
-    //     const car = div(
-    //         'car',
-    //         div(
-    //             'car__nav',
-    //             button('nav__select-car button-select', 'Select', () => {}),
-    //             button('nav__remove-car button-remove', 'Remove', () => {}),
-    //             p('nav__name-car', `${name}`)
-    //         ),
-    //         div(
-    //             'car-view my-2',
-    //             div(
-    //                 'car-view__control',
-    //                 button('a-btn', 'A', () => {}),
-    //                 button('b-btn', 'B', () => {})
-    //             ),
-    //             div(
-    //                 'car-view__draw',
-    //                 div('car-image', image('image', CarSvg, 'car-svg')),
-    //                 div('flag-image', image('flag-image', FlagSvg, 'flag-svg'))
-    //             )
-    //         )
-    //     );
-    //     car.setAttributes({ id: `${id}` });
-    //     // car.setTextContent(`${name}, ${id},   ${color}`);
-    //     return car;
-    // }
-
-    // eslint-disable-next-line class-methods-use-this
     private createGarageView() {
         const content = div(
             'garage-container',
@@ -284,12 +228,6 @@ class Garage {
             map: content.getAllChildrenMap(),
         };
     }
-
-    // async deleteCarHandler() {}
-
-    // getGarageMap() {
-    //     return this.garage.map.get('color-car').value;
-    // }
 }
 
 export default Garage;
