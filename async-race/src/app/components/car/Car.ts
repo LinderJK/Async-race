@@ -1,11 +1,12 @@
 import './car.scss';
 import { CarData, CarParams } from '../../types/data-types';
 import { button, div, image, p } from '../../page/components/BaseComponents';
-import CarSvg from '../../../assets/car.svg';
 import FlagSvg from '../../../assets/flag.svg';
+import CarSvg from '../../../assets/car.svg';
 import { ComponentMap, IComponent } from '../../types/components-types';
 import Loader from '../../services/loader';
 import Button from '../../page/components/button/button';
+import ObjectComponent from '../../page/components/object/object';
 
 class Car {
     id: number;
@@ -26,7 +27,7 @@ class Car {
 
     componentMap: ComponentMap;
 
-    carImage: IComponent | undefined;
+    carSvgObj;
 
     view: IComponent;
 
@@ -35,7 +36,26 @@ class Car {
 
         this.color = data.color;
         this.name = data.name;
+        this.carSvgObj = this.createSvg();
         this.view = this.createView();
+    }
+
+    createSvg() {
+        const objectElement = document.createElement('object');
+        objectElement.setAttribute('type', 'image/svg+xml');
+        objectElement.setAttribute('data', `${CarSvg}`);
+        objectElement.setAttribute('width', '100%');
+        objectElement.setAttribute('height', '100%');
+
+        console.log(objectElement);
+
+        objectElement.onload = () => {
+            const svgDoc = objectElement.contentDocument;
+            const path = svgDoc!.getElementById('path3155');
+
+            path!.setAttribute('fill', `${this.color}`);
+        };
+        return new ObjectComponent(objectElement);
     }
 
     select() {
@@ -100,9 +120,10 @@ class Car {
                 ),
                 div(
                     'car-view__draw',
-                    div('car-image', image('image', CarSvg, 'car-svg')),
+                    div('car-image', this.carSvgObj),
                     div('flag-image', image('flag-image', FlagSvg, 'flag-svg'))
                 )
+                // image('image', ``, 'car-svg')
             )
         );
         carView.setAttributes({ id: `${this.id}` });
