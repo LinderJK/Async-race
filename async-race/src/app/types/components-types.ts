@@ -1,5 +1,5 @@
 export interface IComponent {
-    element: HTMLElement;
+    elem: HTMLElement;
     children: IComponent[];
 
     getElement(): HTMLElement;
