@@ -91,7 +91,9 @@ class Car {
                 button('nav__select-car button-select', 'Select', () => {
                     this.select();
                 }),
-                button('nav__remove-car button-remove', 'Remove', () => {}),
+                button('nav__remove-car button-remove', 'Remove', () => {
+                    this.delete();
+                }),
                 p('nav__name-car', `${this.name}`)
             ),
             div(
