@@ -1,4 +1,4 @@
-const getRandomNameCar = (): string => {
+const getRandomCarName = (): string => {
     const carBrands: { [key: string]: string[] } = {
         Toyota: [
             'Camry',
@@ -114,4 +114,4 @@ const getRandomNameCar = (): string => {
     return `${randomBrand} ${randomModel}`;
 };
 
-export default getRandomNameCar;
+export default getRandomCarName;
