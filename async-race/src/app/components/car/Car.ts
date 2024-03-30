@@ -38,6 +38,16 @@ class Car {
         this.view = this.createView();
     }
 
+    select() {
+        // const car = await Loader.getCar(this.id);
+        // document.dispatchEvent(new Event('selectCar'));
+        const selectCarEvent = new CustomEvent('selectCar', {
+            detail: { selectedCar: this },
+        });
+        document.dispatchEvent(selectCarEvent);
+        // console.log(car);
+    }
+
     async engineSwitch() {
         if (this.nextEngineStatus === 'started') {
             this.params = await Loader.toggleEngine(
@@ -69,7 +79,9 @@ class Car {
             'car',
             div(
                 'car__nav',
-                button('nav__select-car button-select', 'Select', () => {}),
+                button('nav__select-car button-select', 'Select', () => {
+                    this.select();
+                }),
                 button('nav__remove-car button-remove', 'Remove', () => {}),
                 p('nav__name-car', `${this.name}`)
             ),
