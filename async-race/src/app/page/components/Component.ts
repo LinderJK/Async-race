@@ -11,7 +11,7 @@ interface IComponentConstructor {
 }
 
 class Component implements IComponent {
-    element: HTMLElement;
+    elem: HTMLElement;
 
     children: IComponent[] = [];
 
@@ -27,7 +27,7 @@ class Component implements IComponent {
         const element = document.createElement(tagName);
         element.className = className;
         element.textContent = textContent;
-        this.element = element;
+        this.elem = element;
 
         if (attributes) {
             this.setAttributes(attributes);
@@ -38,29 +38,29 @@ class Component implements IComponent {
     }
 
     setTextContent(textContent: string): void {
-        this.element.textContent = textContent;
+        this.elem.textContent = textContent;
     }
 
     getTextContent(): string {
-        if (this.element.textContent) {
-            return this.element.textContent;
+        if (this.elem.textContent) {
+            return this.elem.textContent;
         }
         console.error('no text content');
         return '';
     }
 
     removeAttribute(attribute: string): void {
-        this.element.removeAttribute(attribute);
+        this.elem.removeAttribute(attribute);
     }
 
     setAttributes(attributes: { [x: string]: string | boolean }) {
-        if (attributes && this.element) {
+        if (attributes && this.elem) {
             Object.keys(attributes).forEach((key) => {
                 const value = attributes[key];
                 if (typeof value === 'boolean') {
-                    this.element.setAttribute(key, '');
+                    this.elem.setAttribute(key, '');
                 } else {
-                    this.element.setAttribute(key, value);
+                    this.elem.setAttribute(key, value);
                 }
             });
         }
@@ -72,11 +72,11 @@ class Component implements IComponent {
 
     append(element: IComponent) {
         this.children.push(element);
-        this.element?.append(element.getElement());
+        this.elem?.append(element.getElement());
     }
 
     getElement() {
-        return this.element;
+        return this.elem;
     }
 
     addListener(
@@ -84,7 +84,7 @@ class Component implements IComponent {
         listener: EventListener,
         options = false
     ) {
-        this.element.addEventListener(event, listener, options);
+        this.elem.addEventListener(event, listener, options);
     }
 
     removeListener(
@@ -92,7 +92,7 @@ class Component implements IComponent {
         listener: EventListener,
         options = false
     ) {
-        this.element.removeEventListener(event, listener, options);
+        this.elem.removeEventListener(event, listener, options);
     }
 
     deleteChildren() {
@@ -106,7 +106,7 @@ class Component implements IComponent {
         const index = this.children.indexOf(child);
         if (index !== -1) {
             this.children.splice(index, 1);
-            child.element.remove();
+            child.elem.remove();
         }
     }
 
@@ -114,7 +114,7 @@ class Component implements IComponent {
         const allChildrenMap: Map<string, IComponent> = new Map();
 
         const setChildren = (element: IComponent) => {
-            const key = element.element.className.split(' ')[0];
+            const key = element.elem.className.split(' ')[0];
             allChildrenMap.set(key, element);
             element.children.forEach((child: IComponent) => setChildren(child));
         };
@@ -124,7 +124,11 @@ class Component implements IComponent {
 
     delete() {
         this.deleteChildren();
-        this.element.remove();
+        this.elem.remove();
+    }
+
+    toggleClass(name: string) {
+        this.elem.classList.toggle(name);
     }
 }
 
