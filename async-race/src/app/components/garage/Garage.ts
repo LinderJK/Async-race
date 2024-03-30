@@ -163,6 +163,32 @@ class Garage {
         }
     }
 
+    async handleUpdateCar() {
+        const colorInput = this.inputs?.get('color-car') as IInput;
+        const nameInput = this.inputs?.get('name-car') as IInput;
+
+        const color = colorInput.getValue();
+        const name = nameInput.getValue();
+        console.log(color, name);
+        if (!colorInput || !nameInput || !this.carList || !this.currentCar) {
+            console.error('error color input is not valid');
+            return;
+        }
+
+        try {
+            const carData = await Loader.updateCar(
+                this.currentCar.id,
+                name,
+                color
+            );
+            // this.currentCar.update;
+            console.log(carData);
+        } catch (error) {
+            console.error('Error update car:', error);
+        }
+        this.updateView();
+    }
+
     // eslint-disable-next-line class-methods-use-this
     // private createCarView(carData: CarsData[number]) {
     //     const { name, id } = carData;
@@ -203,6 +229,9 @@ class Garage {
                 input('name-car', 'text', 'add car name'),
                 button('add-car', 'Add Car', () => {
                     this.handleAddCar();
+                }),
+                button('update-car', 'Update selected', () => {
+                    this.handleUpdateCar();
                 })
             ),
             div(
