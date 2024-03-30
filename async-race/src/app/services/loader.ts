@@ -79,6 +79,31 @@ class Loader {
             throw error;
         }
     }
+
+    static async toggleEngine(
+        id: number,
+        status: 'started' | 'stopped'
+    ): Promise<{ velocity: number; distance: number }> {
+        try {
+            const response = await fetch(
+                `http://localhost:3000/engine/?id=${id}&status=${status}`,
+                {
+                    method: 'PATCH',
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error('Failed to toggle engine');
+            }
+
+            const data = await response.json();
+            console.log(data, 'CAR ENGINE', response.status);
+            return data;
+        } catch (error) {
+            console.error('Error toggling engine:', error);
+            throw error;
+        }
+    }
 }
 
 export default Loader;
