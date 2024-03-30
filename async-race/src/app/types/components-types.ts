@@ -42,3 +42,8 @@ export interface IInput extends IComponent {
 }
 
 export type ComponentMap = Map<string, IComponent> | undefined;
+
+export type PageView = {
+    element: IComponent;
+    map: ComponentMap;
+};
