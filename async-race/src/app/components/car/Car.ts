@@ -39,13 +39,10 @@ class Car {
     }
 
     select() {
-        // const car = await Loader.getCar(this.id);
-        // document.dispatchEvent(new Event('selectCar'));
         const selectCarEvent = new CustomEvent('selectCar', {
             detail: { selectedCar: this },
         });
         document.dispatchEvent(selectCarEvent);
-        // console.log(car);
     }
 
     async delete() {
@@ -75,16 +72,14 @@ class Car {
         }
     }
 
-    // eslint-disable-next-line class-methods-use-this
     createView() {
         this.btnStartEngine = button('btn-start-engine', 'A', () =>
             this.engineSwitch()
         );
         this.btnStartDrive = button('btn-start-drive', 'B', () => {
             console.log('start drive');
-            // this.startDrive();
         });
-        const car = div(
+        const carView = div(
             'car',
             div(
                 'car__nav',
@@ -110,9 +105,8 @@ class Car {
                 )
             )
         );
-        car.setAttributes({ id: `${this.id}` });
-        // car.setTextContent(`${name}, ${id},   ${color}`);
-        return car;
+        carView.setAttributes({ id: `${this.id}` });
+        return carView;
     }
 
     get Id() {
