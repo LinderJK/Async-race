@@ -6,13 +6,18 @@ export type CarData = {
 
 export type CarsData = Array<CarData>;
 
-export type ResponseData = CarsData | CarData;
+export type ResponseData = CarsData | CarData | CarParams;
 
-export interface ILoader {
-    load(): Promise<CarsData>;
+export type CarParams = {
+    velocity: number;
+    distance: number;
+};
 
-    createCar(name: string, color: string): Promise<CarData>;
-}
+// export interface ILoader {
+//     load(): Promise<CarsData>;
+//
+//     createCar(name: string, color: string): Promise<CarData>;
+// }
 
 export type HandlerFn = (evt: Event) => void;
 
