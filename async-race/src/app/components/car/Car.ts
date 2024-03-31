@@ -46,19 +46,7 @@ class Car {
         this.carSvgObj = this.createSvg();
         this.view = this.createView();
         this.componentMap = this.view.getAllChildrenMap();
-
-        console.log(this.view, this.carSvgObj, 'OBJECT');
     }
-
-    // calcContainerWidth() {
-    //     // if (this.carContainer) {
-    //     //     console.log(this.carContainer.getWidth(), 'OffsetWidth');
-    //     //     console.log(this.carContainer);
-    //     //     return 1;
-    //     // }
-    //     // return 1;
-    //     // const width = document.querySelector('');
-    // }
 
     createSvg() {
         const objectElement = document.createElement('object');
@@ -66,9 +54,7 @@ class Car {
         objectElement.setAttribute('data', `${CarSvg}`);
         objectElement.setAttribute('width', '100%');
         objectElement.setAttribute('height', '100%');
-
-        console.log(objectElement);
-
+        // console.log(objectElement);
         objectElement.onload = () => {
             const svgDoc = objectElement.contentDocument;
             const path = svgDoc!.getElementById('path3155');
@@ -100,8 +86,6 @@ class Car {
         if (this.nextEngineStatus === 'started') {
             this.nextEngineStatus = 'stopped';
             this.isEngineOn = true;
-            // this.btnStartEngine?.toggleClass('btn-start-engine--sucsess');
-            // this.btnStopEngine?.setAttributes({ disabled: true });
         } else if (this.nextEngineStatus === 'stopped') {
             this.nextEngineStatus = 'started';
             this.isEngineOn = false;
@@ -110,38 +94,32 @@ class Car {
             });
             this.btnStartEngine?.deleteAttribute('disabled');
             this.btnStopEngine?.setAttributes({ disabled: true });
-            // this.btnStartEngine?.toggleClass('btn-start-engine--sucsess');
         }
     }
 
-    private async driveMode() {
+    async driveMode() {
         if (!this.isEngineOn) {
             console.error('Need to start engine');
-            return;
         }
         console.log('start drive');
-
         this.isAnimation = true;
-        this.animate();
+        await this.animate();
         this.btnStartEngine?.setAttributes({ disabled: true });
         const driveStatus = await Loader.switchToDriveMode(this.id);
-        // console.log(driveStatus);
         if (driveStatus === 500) {
             this.isAnimation = false;
         }
-        // if (driveStatus.status === 200 && driveStatus.success === 'true') {
-        // }
         this.btnStopEngine!.deleteAttribute('disabled');
-
-        // this.animate();
+        console.log(driveStatus);
+        return driveStatus;
     }
 
-    private animate() {
+    calcContainerRaceWidth(): number {
+        let width: number = 0;
         const carContainerWidth = this.carContainer?.getWidth();
         const flagImageWidth = this.flagImage?.getWidth();
         const navCarWidth =
             this.componentMap!.get('car-view__control')?.getWidth() || 0;
-        let width: number;
         const carImageWidth = this.carImage?.getWidth() || 0;
         if (
             typeof carContainerWidth === 'number' &&
@@ -152,12 +130,16 @@ class Car {
                 flagImageWidth -
                 navCarWidth -
                 carImageWidth / 2;
-            console.log(width);
+            // console.log(width);
         } else {
             console.error('Error calculating car container width');
-            return;
         }
+        // console.log(width);
+        return width;
+    }
 
+    animate() {
+        const width = this.calcContainerRaceWidth();
         const start = performance.now();
         const totalTime = this.params.distance / this.params.velocity;
         const animateStep = (timestamp: DOMHighResTimeStamp) => {
@@ -221,16 +203,11 @@ class Car {
                     this.btnStartEngine,
                     this.btnStopEngine
                 ),
-                // div(
-                //     'car-view__draw',
-                //     this.carImage,
-                //     div('flag-image', image('flag-image', FlagSvg, 'flag-svg'))
-                // ),
                 this.carContainer
-                // image('image', ``, 'car-svg')
             )
         );
         carView.setAttributes({ id: `${this.id}` });
+
         return carView;
     }
 
