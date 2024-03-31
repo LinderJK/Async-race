@@ -29,6 +29,8 @@ class Garage {
 
     carsData: CarsData = [];
 
+    carsInRace: Car[] = [];
+
     carsNumbers: number = 0;
 
     currentCar: Car | undefined = undefined;
@@ -38,6 +40,8 @@ class Garage {
     carsPerPage = 7;
 
     carsToCreate = 100;
+
+    winnerName: IComponent | undefined = undefined;
 
     constructor() {
         this.view = this.createGarageView();
@@ -55,7 +59,7 @@ class Garage {
 
     setupObserver() {
         const deleteCarHandler = async () => {
-            this.updateView();
+            await this.updateView();
         };
         const selectCarHandler: EventListener = (event: Event) => {
             const customEvent = event as CustomEvent;
@@ -76,6 +80,7 @@ class Garage {
 
     async updateView() {
         const data = await Loader.loadGarageData();
+        this.carsInRace = [];
         this.carsData = data;
         this.carsNumbers = this.carsData.length;
 
@@ -87,23 +92,23 @@ class Garage {
         this.carList?.deleteChildren();
         this.drawCars(carsToShow);
         this.updatePaginationButtons();
-        console.log(this.carsData, data);
-        console.log(this.currentPage, startIndex, endIndex, carsToShow);
+        // console.log(this.carsData, data);
+        // console.log(this.currentPage, startIndex, endIndex, this.carsInRace);
     }
 
     updatePaginationButtons() {
         const totalPages = Math.ceil(this.carsData.length / this.carsPerPage);
         console.log(totalPages, 'total pages');
-        const prevButton = button('prev-page', 'Prev', () => {
+        const prevButton = button('prev-page', 'Prev', async () => {
             if (this.currentPage > 1) {
                 this.currentPage -= 1;
-                this.updateView();
+                await this.updateView();
             }
         });
-        const nextButton = button('next-page', 'Next', () => {
+        const nextButton = button('next-page', 'Next', async () => {
             if (this.currentPage < totalPages) {
                 this.currentPage += 1;
-                this.updateView();
+                await this.updateView();
             }
         });
 
@@ -114,16 +119,20 @@ class Garage {
 
         const paginationContainer = this.view.map?.get('pagination-container');
         paginationContainer?.deleteChildren();
-        paginationContainer?.append(prevButton);
-        paginationContainer?.append(pagesInfo);
-        paginationContainer?.append(nextButton);
+        paginationContainer?.appendChildren([
+            prevButton,
+            pagesInfo,
+            nextButton,
+        ]);
+        // paginationContainer?.append(pagesInfo);
+        // paginationContainer?.append(nextButton);
     }
 
-    drawCars(data: CarsData) {
-        data.forEach((carData) => {
-            const car = new Car(carData);
-            // const carView = car.createCarView();
-            this.carList?.append(car.view);
+    drawCars(carsData: CarsData) {
+        carsData.forEach((car) => {
+            const newCar = new Car(car);
+            this.carList?.append(newCar.view);
+            this.carsInRace.push(newCar);
         });
     }
 
@@ -151,7 +160,7 @@ class Garage {
         } catch (error) {
             console.error('Error creating car:', error);
         }
-        this.updateView();
+        await this.updateView();
     }
 
     async handleUpdateCar() {
@@ -203,21 +212,68 @@ class Garage {
         await this.updateView();
     }
 
+    async startRace() {
+        await Promise.all(this.carsInRace.map((car) => car.engineSwitch()));
+        console.log('cars engine switch done');
+        console.log('starting race!!!!');
+        const racePromises = this.carsInRace.map((car) =>
+            this.startRaceForCar(car)
+        );
+        const firstSuccessfulRace = await Promise.race(
+            racePromises.map((promise, index) =>
+                promise.then((result) => ({
+                    index,
+                    result,
+                }))
+            )
+        );
+        if (firstSuccessfulRace.result === 200) {
+            console.log(
+                `Car ${this.carsInRace[firstSuccessfulRace.index].id} finished first!!!`
+            );
+        } else {
+            console.log(
+                `Race done ${this.carsInRace[firstSuccessfulRace.index].id}.`
+            );
+        }
+
+        // const racePromises = this.carsInRace.map((car) => {
+        //     return this.startRaceForCar(car);
+        // });
+        // await Promise.allSettled(racePromises);
+    }
+
+    // eslint-disable-next-line class-methods-use-this
+    async startRaceForCar(car: Car): Promise<number> {
+        return car.driveMode();
+    }
+
+    // eslint-disable-next-line class-methods-use-this
+    // async startRaceForCar(car: Car) {
+    //     await car.engineSwitch();
+    //     await car.driveMode();
+    // }
+
     private createGarageView() {
+        this.winnerName = p('winner-name', ``);
+
         const content = div(
             'garage-container',
             div(
                 'config',
                 input('color-car', 'color'),
                 input('name-car', 'text', 'add car name'),
-                button('add-car', 'Add Car', () => {
-                    this.handleAddCar();
+                button('add-car', 'Add Car', async () => {
+                    await this.handleAddCar();
                 }),
-                button('update-car', 'Update selected', () => {
-                    this.handleUpdateCar();
+                button('update-car', 'Update selected', async () => {
+                    await this.handleUpdateCar();
                 }),
-                button('generate-car', 'Add 100 cars', () => {
-                    this.createRandomCars();
+                button('generate-car', 'Add 100 cars', async () => {
+                    await this.createRandomCars();
+                }),
+                button('start-race', 'Start Race', async () => {
+                    await this.startRace();
                 })
             ),
 
