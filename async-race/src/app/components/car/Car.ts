@@ -23,7 +23,7 @@ class Car {
 
     btnStartEngine: Button | undefined = undefined;
 
-    btnStartDrive: Button | undefined = undefined;
+    btnStopEngine: Button | undefined = undefined;
 
     componentMap: ComponentMap;
 
@@ -95,22 +95,22 @@ class Car {
     }
 
     async engineSwitch() {
+        this.params = await Loader.toggleEngine(this.id, this.nextEngineStatus);
+
         if (this.nextEngineStatus === 'started') {
-            this.params = await Loader.toggleEngine(
-                this.id,
-                this.nextEngineStatus
-            );
             this.nextEngineStatus = 'stopped';
             this.isEngineOn = true;
-            this.btnStartEngine?.toggleClass('btn-start-engine--sucsess');
+            // this.btnStartEngine?.toggleClass('btn-start-engine--sucsess');
+            // this.btnStopEngine?.setAttributes({ disabled: true });
         } else if (this.nextEngineStatus === 'stopped') {
-            this.params = await Loader.toggleEngine(
-                this.id,
-                this.nextEngineStatus
-            );
             this.nextEngineStatus = 'started';
             this.isEngineOn = false;
-            this.btnStartEngine?.toggleClass('btn-start-engine--sucsess');
+            this.carImage?.addStyle({
+                transform: `translateX(${0}px)`,
+            });
+            this.btnStartEngine?.deleteAttribute('disabled');
+            this.btnStopEngine?.setAttributes({ disabled: true });
+            // this.btnStartEngine?.toggleClass('btn-start-engine--sucsess');
         }
     }
 
@@ -123,11 +123,15 @@ class Car {
 
         this.isAnimation = true;
         this.animate();
+        this.btnStartEngine?.setAttributes({ disabled: true });
         const driveStatus = await Loader.switchToDriveMode(this.id);
-        console.log(driveStatus);
+        // console.log(driveStatus);
         if (driveStatus === 500) {
             this.isAnimation = false;
         }
+        // if (driveStatus.status === 200 && driveStatus.success === 'true') {
+        // }
+        this.btnStopEngine!.deleteAttribute('disabled');
 
         // this.animate();
     }
@@ -173,13 +177,18 @@ class Car {
     }
 
     createView() {
-        this.btnStartEngine = button('btn-start-engine', 'A', () =>
-            this.engineSwitch()
-        );
-        this.btnStartDrive = button('btn-start-drive', 'B', () => {
-            // console.log('start drive');
-            this.driveMode();
+        this.btnStartEngine = button('btn-start-engine', 'A', async () => {
+            await this.engineSwitch();
+            await this.driveMode();
         });
+        this.btnStopEngine = button('btn-start-drive', 'B', async () => {
+            // console.log('start drive');
+            // this.driveMode();
+            console.log(this.isEngineOn);
+            await this.engineSwitch();
+            console.log(this.isEngineOn);
+        });
+        this.btnStopEngine.setAttributes({ disabled: true });
 
         this.carImage = div('car-image', this.carSvgObj);
         this.flagImage = div(
@@ -210,7 +219,7 @@ class Car {
                 div(
                     'car-view__control',
                     this.btnStartEngine,
-                    this.btnStartDrive
+                    this.btnStopEngine
                 ),
                 // div(
                 //     'car-view__draw',
