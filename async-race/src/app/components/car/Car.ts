@@ -37,6 +37,8 @@ class Car {
 
     carContainer: IComponent | undefined = undefined;
 
+    isAnimation: boolean = false;
+
     constructor(data: CarData) {
         this.id = data.id;
         this.color = data.color;
@@ -118,9 +120,15 @@ class Car {
             return;
         }
         console.log('start drive');
+
+        this.isAnimation = true;
         this.animate();
         const driveStatus = await Loader.switchToDriveMode(this.id);
         console.log(driveStatus);
+        if (driveStatus === 500) {
+            this.isAnimation = false;
+        }
+
         // this.animate();
     }
 
@@ -128,9 +136,9 @@ class Car {
         const carContainerWidth = this.carContainer?.getWidth();
         const flagImageWidth = this.flagImage?.getWidth();
         const navCarWidth =
-            this.componentMap!.get('car-view__control')!.getWidth();
+            this.componentMap!.get('car-view__control')?.getWidth() || 0;
         let width: number;
-        const carImageWidth = this.carImage?.getWidth()!;
+        const carImageWidth = this.carImage?.getWidth() || 0;
         if (
             typeof carContainerWidth === 'number' &&
             typeof flagImageWidth === 'number'
@@ -143,11 +151,13 @@ class Car {
             console.log(width);
         } else {
             console.error('Error calculating car container width');
+            return;
         }
 
         const start = performance.now();
         const totalTime = this.params.distance / this.params.velocity;
         const animateStep = (timestamp: DOMHighResTimeStamp) => {
+            if (!this.isAnimation) return;
             const progress = timestamp - start;
             const distanceMoved = (progress / totalTime) * width;
             this.carImage?.addStyle({
@@ -155,6 +165,8 @@ class Car {
             });
             if (distanceMoved < width) {
                 requestAnimationFrame(animateStep);
+            } else {
+                this.isAnimation = false;
             }
         };
         requestAnimationFrame(animateStep);

@@ -90,6 +90,7 @@ class Loader {
             );
             if (!response.ok) {
                 const errorMessage = await response.text();
+                const responseStatus = response.status;
                 if (response.status === 404) {
                     console.error(
                         `Engine parameters for car with id ${id} were not found in the garage. Have you tried to set engine status to "started" before?`
@@ -111,9 +112,11 @@ class Loader {
                         `Failed to switch engine to drive mode: ${errorMessage}`
                     );
                 }
+                return responseStatus;
             }
 
-            return await response.json();
+            const data = await response.json();
+            return data;
             // return data;
         } catch (error) {
             console.error('Error switching engine to drive mode:', error);
