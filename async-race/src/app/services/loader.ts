@@ -80,6 +80,47 @@ class Loader {
         }
     }
 
+    static async switchToDriveMode(id: number) {
+        try {
+            const response = await fetch(
+                `http://localhost:3000/engine?id=${id}&status=drive`,
+                {
+                    method: 'PATCH',
+                }
+            );
+            if (!response.ok) {
+                const errorMessage = await response.text();
+                if (response.status === 404) {
+                    console.error(
+                        `Engine parameters for car with id ${id} were not found in the garage. Have you tried to set engine status to "started" before?`
+                    );
+                } else if (response.status === 400) {
+                    console.error(
+                        `Wrong parameters: ${id} should be any positive number, "status" should be "started", "stopped" or "drive"`
+                    );
+                } else if (response.status === 429) {
+                    console.error(
+                        "Drive already in progress. You can't run drive for the same car twice while it's not stopped."
+                    );
+                } else if (response.status === 500) {
+                    console.error(
+                        'Car has been stopped suddenly. Its engine was broken down.'
+                    );
+                } else {
+                    console.error(
+                        `Failed to switch engine to drive mode: ${errorMessage}`
+                    );
+                }
+            }
+
+            return await response.json();
+            // return data;
+        } catch (error) {
+            console.error('Error switching engine to drive mode:', error);
+            throw error;
+        }
+    }
+
     static async toggleEngine(
         id: number,
         status: 'started' | 'stopped'
