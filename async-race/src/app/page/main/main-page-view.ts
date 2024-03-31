@@ -7,7 +7,7 @@ const mainPageView = () => {
         div(
             'app-content',
             nav(
-                'app-nav navbar navbar-expand-lg bg-body-black',
+                'app-nav navbar navbar-expand-lg bg-body-black mx-2',
                 h1('app-title', 'Async-race')
             ),
             div('main')

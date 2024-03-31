@@ -21,11 +21,15 @@
   justify-content: space-between;
 }
 
-.car-image,
-.flag-image {
+.car-image {
   width: 200px;
-  height: 100px;
+  margin-top: 50px;
   overflow: hidden;
+}
+
+.flag-image {
+  width: 100px;
+  height: 100px;
 }
 
 .image {

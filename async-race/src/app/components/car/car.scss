@@ -30,14 +30,20 @@
   }
 }
 
-.car-image,
-.flag-image {
+.car-image {
   width: 200px;
-  height: 100px;
+  margin-top: 50px;
+  //height: 100px;
   overflow: hidden;
+  //transform: translateY(20px);
 
 }
 
+.flag-image {
+  width: 100px;
+  height: 100px;
+
+}
 
 .image {
   width: 100%;

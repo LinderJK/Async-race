@@ -35,7 +35,7 @@ class Garage {
 
     currentPage = 1;
 
-    carsPerPage = 4;
+    carsPerPage = 7;
 
     carsToCreate = 100;
 
@@ -215,16 +215,18 @@ class Garage {
                 }),
                 button('update-car', 'Update selected', () => {
                     this.handleUpdateCar();
+                }),
+                button('generate-car', 'Add 100 cars', () => {
+                    this.createRandomCars();
                 })
             ),
+
             div(
                 'garage',
                 h1('garage-title', `Garage ${this.carsNumbers}`),
                 div('car-list')
             ),
-            button('generate-car', 'Add 100 cars', () => {
-                this.createRandomCars();
-            }),
+
             div('pagination-container')
         );
         return {
