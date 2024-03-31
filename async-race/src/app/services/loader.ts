@@ -112,6 +112,7 @@ class Loader {
                         `Failed to switch engine to drive mode: ${errorMessage}`
                     );
                 }
+                return await Promise.reject(response.status);
                 // return responseStatus;
             }
 
@@ -141,7 +142,7 @@ class Loader {
             }
 
             const data = await response.json();
-            console.log(data, 'CAR ENGINE', response.status);
+            // console.log(data, 'CAR ENGINE', response.status);
             return data;
         } catch (error) {
             console.error('Error toggling engine:', error);

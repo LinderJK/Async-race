@@ -213,49 +213,35 @@ class Garage {
     }
 
     async startRace() {
+        const winner: Car[] = [];
         await Promise.all(this.carsInRace.map((car) => car.engineSwitch()));
         console.log('cars engine switch done');
         console.log('starting race!!!!');
-        const racePromises = this.carsInRace.map((car) =>
-            this.startRaceForCar(car)
-        );
-        const firstSuccessfulRace = await Promise.race(
-            racePromises.map((promise, index) =>
-                promise.then((result) => ({
-                    index,
-                    result,
-                }))
-            )
-        );
-        if (firstSuccessfulRace.result === 200) {
-            console.log(
-                `Car ${this.carsInRace[firstSuccessfulRace.index].id} finished first!!!`
+
+        try {
+            const racePromises = this.carsInRace.map((car) =>
+                car.driveMode().then((result) => ({ car, result }))
             );
-        } else {
-            console.log(
-                `Race done ${this.carsInRace[firstSuccessfulRace.index].id}.`
-            );
+            const { car, result } = await Promise.any(racePromises);
+            if (result === 200) {
+                winner.push(car);
+                this.updateWinner(car);
+                console.log('first successful race', winner);
+            }
+        } catch (error) {
+            console.error('Error during the race:', error);
         }
-
-        // const racePromises = this.carsInRace.map((car) => {
-        //     return this.startRaceForCar(car);
-        // });
-        // await Promise.allSettled(racePromises);
+        if (winner.length === 0) {
+            console.log('No successful race.');
+        }
     }
 
-    // eslint-disable-next-line class-methods-use-this
-    async startRaceForCar(car: Car): Promise<number> {
-        return car.driveMode();
+    updateWinner(car: Car) {
+        this.winnerName?.setTextContent(`Car ${car.name}!!!`);
     }
-
-    // eslint-disable-next-line class-methods-use-this
-    // async startRaceForCar(car: Car) {
-    //     await car.engineSwitch();
-    //     await car.driveMode();
-    // }
 
     private createGarageView() {
-        this.winnerName = p('winner-name', ``);
+        this.winnerName = p('winner-name', ' ');
 
         const content = div(
             'garage-container',
@@ -274,7 +260,8 @@ class Garage {
                 }),
                 button('start-race', 'Start Race', async () => {
                     await this.startRace();
-                })
+                }),
+                this.winnerName
             ),
 
             div(

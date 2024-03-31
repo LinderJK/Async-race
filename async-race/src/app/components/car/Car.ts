@@ -106,7 +106,7 @@ class Car {
         await this.animate();
         this.btnStartEngine?.setAttributes({ disabled: true });
         const driveStatus = await Loader.switchToDriveMode(this.id);
-        if (driveStatus === 500) {
+        if (driveStatus !== 200) {
             this.isAnimation = false;
         }
         this.btnStopEngine!.deleteAttribute('disabled');
