@@ -31,14 +31,32 @@ class Car {
 
     view: IComponent;
 
+    carImage: IComponent | undefined = undefined;
+
+    flagImage: IComponent | undefined = undefined;
+
+    carContainer: IComponent | undefined = undefined;
+
     constructor(data: CarData) {
         this.id = data.id;
-
         this.color = data.color;
         this.name = data.name;
         this.carSvgObj = this.createSvg();
         this.view = this.createView();
+        this.componentMap = this.view.getAllChildrenMap();
+
+        console.log(this.view, this.carSvgObj, 'OBJECT');
     }
+
+    // calcContainerWidth() {
+    //     // if (this.carContainer) {
+    //     //     console.log(this.carContainer.getWidth(), 'OffsetWidth');
+    //     //     console.log(this.carContainer);
+    //     //     return 1;
+    //     // }
+    //     // return 1;
+    //     // const width = document.querySelector('');
+    // }
 
     createSvg() {
         const objectElement = document.createElement('object');
@@ -81,6 +99,7 @@ class Car {
                 this.nextEngineStatus
             );
             this.nextEngineStatus = 'stopped';
+            this.isEngineOn = true;
             this.btnStartEngine?.toggleClass('btn-start-engine--sucsess');
         } else if (this.nextEngineStatus === 'stopped') {
             this.params = await Loader.toggleEngine(
@@ -88,8 +107,57 @@ class Car {
                 this.nextEngineStatus
             );
             this.nextEngineStatus = 'started';
+            this.isEngineOn = false;
             this.btnStartEngine?.toggleClass('btn-start-engine--sucsess');
         }
+    }
+
+    private async driveMode() {
+        if (!this.isEngineOn) {
+            console.error('Need to start engine');
+            return;
+        }
+        console.log('start drive');
+        this.animate();
+        const driveStatus = await Loader.switchToDriveMode(this.id);
+        console.log(driveStatus);
+        // this.animate();
+    }
+
+    private animate() {
+        const carContainerWidth = this.carContainer?.getWidth();
+        const flagImageWidth = this.flagImage?.getWidth();
+        const navCarWidth =
+            this.componentMap!.get('car-view__control')!.getWidth();
+        let width: number;
+        const carImageWidth = this.carImage?.getWidth()!;
+        if (
+            typeof carContainerWidth === 'number' &&
+            typeof flagImageWidth === 'number'
+        ) {
+            width =
+                carContainerWidth -
+                flagImageWidth -
+                navCarWidth -
+                carImageWidth / 2;
+            console.log(width);
+        } else {
+            console.error('Error calculating car container width');
+        }
+
+        const start = performance.now();
+        const totalTime = this.params.distance / this.params.velocity;
+        const animateStep = (timestamp: DOMHighResTimeStamp) => {
+            const progress = timestamp - start;
+            const distanceMoved = (progress / totalTime) * width;
+            this.carImage?.addStyle({
+                transform: `translateX(${distanceMoved}px)`,
+            });
+            if (distanceMoved < width) {
+                requestAnimationFrame(animateStep);
+            }
+        };
+        requestAnimationFrame(animateStep);
     }
 
     createView() {
@@ -97,8 +165,22 @@ class Car {
             this.engineSwitch()
         );
         this.btnStartDrive = button('btn-start-drive', 'B', () => {
-            console.log('start drive');
+            // console.log('start drive');
+            this.driveMode();
         });
+
+        this.carImage = div('car-image', this.carSvgObj);
+        this.flagImage = div(
+            'flag-image',
+            image('flag-image', FlagSvg, 'flag-svg')
+        );
+
+        this.carContainer = div(
+            'car-view__draw',
+            this.carImage,
+            this.flagImage
+        );
+
         const carView = div(
             'car',
             div(
@@ -118,11 +200,12 @@ class Car {
                     this.btnStartEngine,
                     this.btnStartDrive
                 ),
-                div(
-                    'car-view__draw',
-                    div('car-image', this.carSvgObj),
-                    div('flag-image', image('flag-image', FlagSvg, 'flag-svg'))
-                )
+                // div(
+                //     'car-view__draw',
+                //     this.carImage,
+                //     div('flag-image', image('flag-image', FlagSvg, 'flag-svg'))
+                // ),
+                this.carContainer
                 // image('image', ``, 'car-svg')
             )
         );
