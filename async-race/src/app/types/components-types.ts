@@ -34,7 +34,11 @@ export interface IComponent {
         options?: boolean
     ): void;
 
+    addStyle(styles: { [key: string]: string }): void;
+
     setTextContent(textContent: string): void;
+
+    getWidth(): number;
 }
 
 export interface IInput extends IComponent {

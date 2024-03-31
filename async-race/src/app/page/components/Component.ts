@@ -127,6 +127,17 @@ class Component implements IComponent {
         this.elem.remove();
     }
 
+    addStyle(styles: { [key: string]: string }) {
+        const elemStyle = this.elem.style as CSSStyleDeclaration;
+        Object.keys(styles).forEach((property) => {
+            elemStyle.setProperty(property, styles[property]);
+        });
+    }
+
+    getWidth() {
+        return this.elem.clientWidth;
+    }
+
     toggleClass(name: string) {
         this.elem.classList.toggle(name);
     }
