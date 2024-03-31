@@ -14,7 +14,7 @@ export interface IComponent {
 
     append(element: IComponent): void;
 
-    removeAttribute(attribute: string): void;
+    deleteAttribute(attribute: string): void;
 
     getTextContent(): string;
 

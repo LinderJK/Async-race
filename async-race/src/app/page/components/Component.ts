@@ -49,7 +49,7 @@ class Component implements IComponent {
         return '';
     }
 
-    removeAttribute(attribute: string): void {
+    deleteAttribute(attribute: string): void {
         this.elem.removeAttribute(attribute);
     }
 
