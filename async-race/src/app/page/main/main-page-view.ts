@@ -7,10 +7,10 @@ const mainPageView = () => {
         div(
             'app-content',
             nav(
-                'app-nav navbar navbar-expand-lg bg-body-black mx-2',
-                h1('app-title', 'Async-race'),
-                button('btn-winners', 'To Winners', () => {}),
-                button('btn-garage', 'To Garage', () => {})
+                'app-nav navbar justify-content-start mx-2',
+                h1('app-title flex-grow-1', 'Async-race'),
+                button('btn-winners mx-2', 'To Winners', () => {}),
+                button('btn-garage mx-2', 'To Garage', () => {})
             ),
             div('main')
         )
