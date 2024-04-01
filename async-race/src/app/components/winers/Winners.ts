@@ -4,7 +4,7 @@ import type { IComponent, PageView } from '../../types/components-types';
 import type { WinnerData } from '../../types/data-types';
 import LoaderWin from '../../services/winner-loader';
 
-class Winers {
+class Winners {
     view: PageView;
 
     table: IComponent | undefined = undefined;
@@ -55,4 +55,4 @@ class Winers {
     }
 }
 
-export default Winers;
+export default Winners;
