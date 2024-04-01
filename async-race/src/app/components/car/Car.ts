@@ -37,7 +37,7 @@ class Car {
 
     carContainer: IComponent | undefined = undefined;
 
-    private isAnimation: boolean = false;
+    isAnimation: boolean = false;
 
     private timeInRace: number = 0;
 
@@ -109,9 +109,12 @@ class Car {
         this.isAnimation = true;
         await this.animate();
         this.btnStartEngine?.setAttributes({ disabled: true });
-        const driveStatus = await Loader.switchToDriveMode(this.id);
-        if (driveStatus !== 200) {
+        let driveStatus;
+        try {
+            driveStatus = await Loader.switchToDriveMode(this.id);
+        } catch (error) {
             this.isAnimation = false;
+            return Promise.reject(driveStatus);
         }
         this.btnStopEngine!.deleteAttribute('disabled');
         console.log(driveStatus);
@@ -152,6 +155,7 @@ class Car {
                 this.timeInRace = progress;
                 return;
             }
+
             const distanceMoved = (progress / totalTime) * width;
             this.carImage?.addStyle({
                 transform: `translateX(${distanceMoved}px)`,
