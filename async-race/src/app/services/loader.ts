@@ -1,7 +1,6 @@
 import { CarData, CarsData } from '../types/data-types';
 
 class Loader {
-    // eslint-disable-next-line class-methods-use-this
     static async loadGarageData(): Promise<CarsData> {
         try {
             const response = await fetch('http://localhost:3000/garage');
@@ -9,7 +8,7 @@ class Loader {
                 throw new Error('Failed to fetch garage');
             }
             const data = await response.json();
-            console.log(data);
+
             return data;
         } catch (err) {
             console.error(err);
@@ -17,11 +16,6 @@ class Loader {
         }
     }
 
-    // eslint-disable-next-line class-methods-use-this
-    // addCar() {
-    //     console.log('add car');
-    // }
-    // eslint-disable-next-line class-methods-use-this
     static async addCar(name: string, color: string): Promise<CarData> {
         try {
             const response = await fetch('http://localhost:3000/garage', {
@@ -37,7 +31,7 @@ class Loader {
             }
 
             const data = await response.json();
-            console.log(data, 'all cars');
+
             return data;
         } catch (error) {
             console.error('Failed to add car:', error);
@@ -52,7 +46,6 @@ class Loader {
             if (!response.ok) {
                 throw new Error('Car not found');
             }
-
             return (await response.json()) as CarData;
         } catch (error) {
             console.error('Error fetching car:', error);
@@ -67,10 +60,7 @@ class Loader {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                // body: JSON.stringify({ name, color }),
             });
-            console.log(response, 'delete card resp');
-
             if (!response.ok) {
                 throw new Error('Car not found');
             }
@@ -113,12 +103,8 @@ class Loader {
                     );
                 }
                 return await Promise.reject(response.status);
-                // return responseStatus;
             }
-
-            // const data = await response.json();
             return response.status;
-            // return data;
         } catch (error) {
             console.error('Error switching engine to drive mode:', error);
             throw error;
@@ -142,7 +128,6 @@ class Loader {
             }
 
             const data = await response.json();
-            // console.log(data, 'CAR ENGINE', response.status);
             return data;
         } catch (error) {
             console.error('Error toggling engine:', error);
@@ -165,7 +150,6 @@ class Loader {
             }
 
             const data = await response.json();
-            console.log('Car update success:', data);
             return data;
         } catch (error) {
             console.error('Error update car:', error);

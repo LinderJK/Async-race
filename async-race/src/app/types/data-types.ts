@@ -20,15 +20,7 @@ export type WinnerData = {
     time: number;
 };
 
-// export interface ILoader {
-//     load(): Promise<CarsData>;
-//
-//     createCar(name: string, color: string): Promise<CarData>;
-// }
-
 export type HandlerFn = (evt: Event) => void;
-
-// export type CallbackFunction = (data: ResponseData) => void;
 
 export enum RequestMethod {
     GET = 0,
