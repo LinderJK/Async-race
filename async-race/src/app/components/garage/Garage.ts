@@ -19,51 +19,55 @@ import getRandomColor from '../../utils/getRandomColor';
 import getRandomCarName from '../../utils/getRandomCarName';
 
 class Garage {
-    view: PageView;
+    view: PageView; // View of the garage page.
 
-    inputs: ComponentMap;
+    inputs: ComponentMap; // The input fields of the garage.
 
-    carList: IComponent;
+    carList: IComponent | undefined = undefined; // Represents a container the cars in the garage.
 
-    title: IComponent;
+    title: IComponent | undefined = undefined; // Represents the garage title.
 
-    winnerName: IComponent | undefined = undefined;
+    winnerName: IComponent | undefined = undefined; // Represents the name of the winner of the race.
 
-    btnStartRace: IComponent | undefined = undefined;
+    btnStartRace: IComponent | undefined = undefined; // Represents the 'Start Race' button.
 
-    btnResetRace: IComponent | undefined = undefined;
+    btnResetRace: IComponent | undefined = undefined; // Represents the 'Reset Race' button.
 
-    carsData: CarsData = [];
+    carsData: CarsData = []; // Represents the data of cars in the garage.
 
-    carsInRace: Car[] = [];
+    carsInRace: Car[] = []; // The cars participating in the race.
 
-    carsNumbers: number = 0;
+    carsNumbers: number = 0; // The number of cars in the garage.
 
-    currentCar: Car | undefined = undefined;
+    currentCar: Car | undefined = undefined; // Represents the current selected car.
 
-    currentPage = 1;
+    currentPage = 1; // Represents the current page number.
 
-    carsPerPage = 7;
+    carsPerPage = 7; // Represents the number of cars per page.
 
-    carsToCreate = 100;
+    carsToCreate = 100; // Represents the number of cars to create.
 
-    winnerCar: Car | undefined = undefined;
+    winnerCar: Car | undefined = undefined; // Represents the winner car of the race.
 
     constructor() {
         this.view = this.createGarageView();
         if (!this.view.map) {
-            console.error('dont get garage view map');
-            throw new Error('dont get garage view map');
+            console.error('Could not obtain garage view map');
+            return;
         }
         this.inputs = this.view.map.get('config')?.getAllChildrenMap();
-        this.carList = this.view.map.get('car-list')!;
-        this.title = this.view.map.get('garage-title')!;
+        this.carList = this.view.map.get('car-list');
+        this.title = this.view.map.get('garage-title');
+
         this.updateView();
         this.setupObserver();
         this.updatePaginationButtons();
     }
 
-    setupObserver() {
+    /**
+     * Sets up event listeners.
+     */
+    private setupObserver() {
         const deleteCarHandler = async () => {
             await this.updateView();
         };
@@ -71,7 +75,6 @@ class Garage {
             const customEvent = event as CustomEvent;
             const { selectedCar } = customEvent.detail;
             this.currentCar = selectedCar;
-            console.log(selectedCar, this.currentCar);
             this.inputs
                 ?.get('color-car')
                 ?.setAttributes({ value: `${this.currentCar?.Color}` });
@@ -79,33 +82,44 @@ class Garage {
                 ?.get('name-car')
                 ?.setAttributes({ value: `${this.currentCar?.Name}` });
         };
-
         document.addEventListener('deleteCar', deleteCarHandler);
         document.addEventListener('selectCar', selectCarHandler);
     }
 
+    /**
+     * Asynchronously updates the view of the garage.
+     * Fetches the latest garage data using Loader.loadGarageData,
+     * updates the display with the retrieved data, and updates pagination buttons.
+     */
     async updateView() {
         const data = await Loader.loadGarageData();
         this.carsInRace = [];
         this.carsData = data;
+
         this.carsNumbers = this.carsData.length;
 
         const startIndex = (this.currentPage - 1) * this.carsPerPage;
         const endIndex = startIndex + this.carsPerPage;
         const carsToShow = this.carsData.slice(startIndex, endIndex);
 
-        this.title.setTextContent(`Garage ${this.carsNumbers}`);
+        if (this.title) {
+            this.title.setTextContent(`Garage ${this.carsNumbers}`);
+        }
+
         this.carList?.deleteChildren();
+
         this.drawCars(carsToShow);
         this.updatePaginationButtons();
-        // this.btnResetRace?.setAttributes({ disabled: true });
-        // console.log(this.carsData, data);
-        // console.log(this.currentPage, startIndex, endIndex, this.carsInRace);
     }
 
+    /**
+     * Updates pagination buttons based on current page and total number of pages.
+     * Calculates the total number of pages based on the length of carsData and carsPerPage.
+     * Generates 'Prev' and 'Next' buttons to navigate between pages.
+     * Updates currentPage when 'Prev' or 'Next' button is clicked and calls updateView asynchronously.
+     */
     updatePaginationButtons() {
         const totalPages = Math.ceil(this.carsData.length / this.carsPerPage);
-        console.log(totalPages, 'total pages');
         const prevButton = button('prev-page', 'Prev', async () => {
             if (this.currentPage > 1) {
                 this.currentPage -= 1;
@@ -131,11 +145,15 @@ class Garage {
             pagesInfo,
             nextButton,
         ]);
-        // paginationContainer?.append(pagesInfo);
-        // paginationContainer?.append(nextButton);
     }
 
-    drawCars(carsData: CarsData) {
+    /**
+     * Draws cars based on the provided carsData array.
+     * Iterates over each car in the array, creates a new Car object, appends its view to the carList,
+     * and adds the car to the carsInRace array.
+     * @param {CarsData} carsData The array of car data to be drawn.
+     */
+    private drawCars(carsData: CarsData) {
         carsData.forEach((car) => {
             const newCar = new Car(car);
             this.carList?.append(newCar.view);
@@ -143,16 +161,22 @@ class Garage {
         });
     }
 
+    /**
+     * Asynchronously handles the addition of a new car.
+     * Retrieves color and name input values, validates inputs,
+     * and attempts to add a new car via Loader.addCar.
+     */
     async handleAddCar() {
         const colorInput = this.inputs?.get('color-car') as IInput;
         const nameInput = this.inputs?.get('name-car') as IInput;
 
         const color = colorInput.getValue();
         const name = nameInput.getValue();
-        console.log(color, name);
+
         if (!colorInput || !nameInput || !this.carList) {
             console.error('error color input is not valid');
         }
+
         try {
             const carData = await Loader.addCar(name, color);
             if (this.carsNumbers <= this.carsPerPage) {
@@ -162,39 +186,43 @@ class Garage {
                     this.carList.append(carView);
                 }
             }
-
-            console.log(carData);
         } catch (error) {
             console.error('Error creating car:', error);
         }
         await this.updateView();
     }
 
+    /**
+     * Asynchronously handles the update a car.
+     * Retrieves color and name input values, validates inputs,
+     * and attempts to update the current cars data via Loader.updateCar.
+     */
     async handleUpdateCar() {
         const colorInput = this.inputs?.get('color-car') as IInput;
         const nameInput = this.inputs?.get('name-car') as IInput;
 
         const color = colorInput.getValue();
         const name = nameInput.getValue();
-        console.log(color, name);
+
         if (!colorInput || !nameInput || !this.carList || !this.currentCar) {
             console.error('error color input is not valid');
             return;
         }
 
         try {
-            const carData = await Loader.updateCar(
-                this.currentCar.id,
-                name,
-                color
-            );
-            console.log(carData);
+            await Loader.updateCar(this.currentCar.id, name, color);
         } catch (error) {
             console.error('Error update car:', error);
         }
+
         await this.updateView();
     }
 
+    /**
+     * Asynchronously creates random cars and adds them to the garage.
+     * Generates a specified number of random cars with random colors and names.
+     * Adds each generated car to the garage via Loader.addCar asynchronously.
+     */
     async createRandomCars() {
         const newCars = [];
 
@@ -207,23 +235,28 @@ class Garage {
 
         const promises = newCars.map(async (car) => {
             try {
-                const carData = await Loader.addCar(car.name, car.color);
-                console.log(carData);
+                await Loader.addCar(car.name, car.color);
             } catch (error) {
                 console.error('Error creating car:', error);
             }
         });
 
         await Promise.all(promises);
-        console.log(newCars);
         await this.updateView();
     }
 
+    /**
+     * Asynchronously starts the race.
+     * Resets the winner name display.
+     * Activates the engine for each car participating in the race.
+     * Initiates the drive mode for each car concurrently.
+     * Updates the winner's statistics and displays.
+     */
     async startRace() {
         this.winnerName?.setTextContent('New Winner is...');
+
         await Promise.all(this.carsInRace.map((car) => car.engineSwitch()));
-        console.log('cars engine switch done');
-        console.log('starting race!!!!');
+
         try {
             const racePromises = this.carsInRace.map((car) =>
                 car.driveMode().then((result) => ({ car, result }))
@@ -233,30 +266,41 @@ class Garage {
                 this.winnerCar = car;
                 car.incrementWins();
                 this.updateWinner();
-                this.setWinner();
-                console.log('first successful race', car);
+                // this.setWinner();
             }
         } catch (error) {
             console.error('Error during the race:', error);
         }
     }
 
+    /**
+     * Turns off the engine for each car participating in the race.
+     */
     async resetRace() {
         await Promise.all(this.carsInRace.map((car) => car.engineSwitch()));
     }
 
-    updateWinner() {
+    /**
+     * Updates the winners name display with the name of the winning car.
+     */
+    private updateWinner() {
         this.winnerName?.setTextContent(
             `Car ${this.winnerCar?.Name} wins the race!!!`
         );
     }
 
-    // eslint-disable-next-line class-methods-use-this
-    async setWinner() {
-        console.log('setWinner');
-        console.log(this.winnerCar?.raceTime);
-    }
+    // async setWinner() {
+    //     console.log('setWinner');
+    //     console.log(this.winnerCar?.raceTime);
+    // }
 
+    /**
+     * Creates the view for the garage.
+     * Initializes various UI elements including buttons, inputs, and text content.
+     * Sets up event listeners for buttons.
+     * @returns {element: IComponent, map: Map<string, IComponent>}
+     * Object containing the created HTML element and its child elements map.
+     */
     private createGarageView() {
         this.winnerName = p('winner-name', ' ');
 
