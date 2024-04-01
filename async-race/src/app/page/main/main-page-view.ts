@@ -1,5 +1,5 @@
 import './main-page.scss';
-import { div, h1, nav } from '../components/BaseComponents';
+import { button, div, h1, nav } from '../components/BaseComponents';
 
 const mainPageView = () => {
     const content = div(
@@ -8,7 +8,9 @@ const mainPageView = () => {
             'app-content',
             nav(
                 'app-nav navbar navbar-expand-lg bg-body-black mx-2',
-                h1('app-title', 'Async-race')
+                h1('app-title', 'Async-race'),
+                button('btn-winners', 'To Winners', () => {}),
+                button('btn-garage', 'To Garage', () => {})
             ),
             div('main')
         )
