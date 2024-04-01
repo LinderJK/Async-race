@@ -215,11 +215,9 @@ class Garage {
     }
 
     async startRace() {
-        const winner: Car[] = [];
         await Promise.all(this.carsInRace.map((car) => car.engineSwitch()));
         console.log('cars engine switch done');
         console.log('starting race!!!!');
-
         try {
             const racePromises = this.carsInRace.map((car) =>
                 car.driveMode().then((result) => ({ car, result }))
@@ -227,15 +225,13 @@ class Garage {
             const { car, result } = await Promise.any(racePromises);
             if (result === 200) {
                 this.winnerCar = car;
+                car.incrementWins();
                 this.updateWinner();
                 this.setWinner();
                 console.log('first successful race', car);
             }
         } catch (error) {
             console.error('Error during the race:', error);
-        }
-        if (winner.length === 0) {
-            console.log('No successful race.');
         }
     }
 
@@ -245,8 +241,8 @@ class Garage {
 
     // eslint-disable-next-line class-methods-use-this
     async setWinner() {
-        // const getWin = await Loader.
-        console.log(this.winnerCar?.timeRace, 'TIME');
+        console.log('setWinner');
+        console.log(this.winnerCar?.raceTime);
     }
 
     private createGarageView() {
@@ -278,7 +274,6 @@ class Garage {
                 h1('garage-title', `Garage ${this.carsNumbers}`),
                 div('car-list')
             ),
-
             div('pagination-container')
         );
         return {
