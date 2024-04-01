@@ -3,19 +3,19 @@ import Garage from '../components/garage/Garage';
 import Winners from '../components/winers/Winners';
 
 class AppManager {
-    root: HTMLElement | null = document.querySelector('#root');
+    root: HTMLElement | null = document.querySelector('#root'); // The root HTML element.
 
-    mainPageView = mainPageView();
+    mainPageView = mainPageView(); // Instance of the main page view.
 
-    mainContainer;
+    mainContainer; // The main container element.
 
-    private garage;
+    buttonGarage; // The button for navigating to the garage view.
 
-    private winners;
+    buttonWinners; // The button for navigating to the winners view.
 
-    buttonGarage;
+    private garage; // Instance of the garage component.
 
-    buttonWinners;
+    private winners; // Instance of the winners component.
 
     constructor() {
         this.mainContainer = this.mainPageView.map.get('main');
@@ -25,6 +25,10 @@ class AppManager {
         this.winners = new Winners();
     }
 
+    /**
+     * Renders the garage view.
+     * Clears the main container and appends the garage view to it.
+     */
     renderGarage() {
         if (!this.mainContainer) {
             console.error('Garage container not found');
@@ -35,6 +39,10 @@ class AppManager {
         this.mainContainer.append(this.garage.view.element);
     }
 
+    /**
+     * Renders the winners view.
+     * Clears the main container and appends the winners view to it.
+     */
     renderWinners() {
         if (!this.mainContainer) {
             console.error('Garage container not found');
@@ -45,6 +53,9 @@ class AppManager {
         this.mainContainer.append(this.winners.view.element);
     }
 
+    /**
+     * Clears the root HTML element by removing all its child nodes.
+     */
     clearRoot(): void {
         if (!this.root) {
             console.error('dont find root');
@@ -55,14 +66,20 @@ class AppManager {
         }
     }
 
+    /**
+     * Starts the application.
+     * Appends the main page view to the root element.
+     * Renders the garage view by default.
+     * Sets up event listeners for navigation buttons.
+     */
     public start(): void {
         if (!this.root) {
             console.error('dont find root');
             return;
         }
         this.root.append(this.mainPageView.element);
-        // this.renderGarage();
-        this.renderWinners();
+        this.renderGarage();
+        // this.renderWinners();
         this.buttonGarage?.addListener('click', () => this.renderGarage());
         this.buttonWinners?.addListener('click', () => this.renderWinners());
     }
