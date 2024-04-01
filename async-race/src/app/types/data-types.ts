@@ -13,6 +13,13 @@ export type CarParams = {
     distance: number;
 };
 
+export type WinnersData = Array<WinnerData>;
+export type WinnerData = {
+    id: number;
+    wins: number;
+    time: number;
+};
+
 // export interface ILoader {
 //     load(): Promise<CarsData>;
 //
