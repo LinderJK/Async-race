@@ -39,6 +39,8 @@ class Car {
 
     isAnimation: boolean = false;
 
+    timeInRace: number = 0;
+
     constructor(data: CarData) {
         this.id = data.id;
         this.color = data.color;
@@ -143,8 +145,11 @@ class Car {
         const start = performance.now();
         const totalTime = this.params.distance / this.params.velocity;
         const animateStep = (timestamp: DOMHighResTimeStamp) => {
-            if (!this.isAnimation) return;
             const progress = timestamp - start;
+            if (!this.isAnimation) {
+                this.timeInRace = progress;
+                return;
+            }
             const distanceMoved = (progress / totalTime) * width;
             this.carImage?.addStyle({
                 transform: `translateX(${distanceMoved}px)`,
@@ -153,6 +158,7 @@ class Car {
                 requestAnimationFrame(animateStep);
             } else {
                 this.isAnimation = false;
+                this.timeInRace = progress;
             }
         };
         requestAnimationFrame(animateStep);
@@ -233,6 +239,10 @@ class Car {
 
     set Color(color: string) {
         this.color = color;
+    }
+
+    get timeRace(): number {
+        return this.timeInRace;
     }
 }
 

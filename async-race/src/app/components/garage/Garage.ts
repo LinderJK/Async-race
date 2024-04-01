@@ -43,6 +43,8 @@ class Garage {
 
     winnerName: IComponent | undefined = undefined;
 
+    winnerCar: Car | undefined = undefined;
+
     constructor() {
         this.view = this.createGarageView();
         if (!this.view.map) {
@@ -224,9 +226,10 @@ class Garage {
             );
             const { car, result } = await Promise.any(racePromises);
             if (result === 200) {
-                winner.push(car);
-                this.updateWinner(car);
-                console.log('first successful race', winner);
+                this.winnerCar = car;
+                this.updateWinner();
+                this.setWinner();
+                console.log('first successful race', car);
             }
         } catch (error) {
             console.error('Error during the race:', error);
@@ -236,8 +239,14 @@ class Garage {
         }
     }
 
-    updateWinner(car: Car) {
-        this.winnerName?.setTextContent(`Car ${car.name}!!!`);
+    updateWinner() {
+        this.winnerName?.setTextContent(`Car ${this.winnerCar?.Name}!!!`);
+    }
+
+    // eslint-disable-next-line class-methods-use-this
+    async setWinner() {
+        // const getWin = await Loader.
+        console.log(this.winnerCar?.timeRace, 'TIME');
     }
 
     private createGarageView() {
