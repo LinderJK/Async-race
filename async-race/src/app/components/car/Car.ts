@@ -37,9 +37,11 @@ class Car {
 
     carContainer: IComponent | undefined = undefined;
 
-    isAnimation: boolean = false;
+    private isAnimation: boolean = false;
 
-    timeInRace: number = 0;
+    private timeInRace: number = 0;
+
+    private winsCount: number = 0;
 
     constructor(data: CarData) {
         this.id = data.id;
@@ -241,8 +243,16 @@ class Car {
         this.color = color;
     }
 
-    get timeRace(): number {
+    get raceTime(): number {
         return this.timeInRace;
+    }
+
+    incrementWins(): void {
+        this.winsCount += 1;
+    }
+
+    get winsNumbers() {
+        return this.winsCount;
     }
 }
 
