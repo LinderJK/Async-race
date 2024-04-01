@@ -10,11 +10,18 @@
   background-color: #565e64;
 }
 
+.winner-name {
+  margin: 0;
+  font-size: 1.6rem;
+}
+
 .config {
   display: flex;
   flex-flow: row wrap;
+  align-items: center;
   margin-bottom: 20px;
   gap: 20px;
+  min-height: 60px;
 }
 
 .car-list {
