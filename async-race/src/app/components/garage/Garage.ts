@@ -27,6 +27,12 @@ class Garage {
 
     title: IComponent;
 
+    winnerName: IComponent | undefined = undefined;
+
+    btnStartRace: IComponent | undefined = undefined;
+
+    btnResetRace: IComponent | undefined = undefined;
+
     carsData: CarsData = [];
 
     carsInRace: Car[] = [];
@@ -40,8 +46,6 @@ class Garage {
     carsPerPage = 7;
 
     carsToCreate = 100;
-
-    winnerName: IComponent | undefined = undefined;
 
     winnerCar: Car | undefined = undefined;
 
@@ -94,6 +98,7 @@ class Garage {
         this.carList?.deleteChildren();
         this.drawCars(carsToShow);
         this.updatePaginationButtons();
+        // this.btnResetRace?.setAttributes({ disabled: true });
         // console.log(this.carsData, data);
         // console.log(this.currentPage, startIndex, endIndex, this.carsInRace);
     }
@@ -215,6 +220,7 @@ class Garage {
     }
 
     async startRace() {
+        this.winnerName?.setTextContent('New Winner is...');
         await Promise.all(this.carsInRace.map((car) => car.engineSwitch()));
         console.log('cars engine switch done');
         console.log('starting race!!!!');
@@ -235,8 +241,14 @@ class Garage {
         }
     }
 
+    async resetRace() {
+        await Promise.all(this.carsInRace.map((car) => car.engineSwitch()));
+    }
+
     updateWinner() {
-        this.winnerName?.setTextContent(`Car ${this.winnerCar?.Name}!!!`);
+        this.winnerName?.setTextContent(
+            `Car ${this.winnerCar?.Name} wins the race!!!`
+        );
     }
 
     // eslint-disable-next-line class-methods-use-this
@@ -247,6 +259,13 @@ class Garage {
 
     private createGarageView() {
         this.winnerName = p('winner-name', ' ');
+
+        this.btnStartRace = button('start-race', 'Start Race', async () => {
+            await this.startRace();
+        });
+        this.btnResetRace = button('reset-race', 'Reset Race', async () => {
+            await this.resetRace();
+        });
 
         const content = div(
             'garage-container',
@@ -263,9 +282,9 @@ class Garage {
                 button('generate-car', 'Add 100 cars', async () => {
                     await this.createRandomCars();
                 }),
-                button('start-race', 'Start Race', async () => {
-                    await this.startRace();
-                }),
+                this.btnStartRace,
+                this.btnResetRace,
+
                 this.winnerName
             ),
 
