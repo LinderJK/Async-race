@@ -3,7 +3,7 @@ import { CarData, CarsData } from '../types/data-types';
 class Loader {
     static async loadGarageData(): Promise<CarsData> {
         try {
-            const response = await fetch('http://localhost:3000/garage');
+            const response = await fetch('http://127.0.0.1:3000/garage');
             if (!response.ok) {
                 throw new Error('Failed to fetch garage');
             }
@@ -18,7 +18,7 @@ class Loader {
 
     static async addCar(name: string, color: string): Promise<CarData> {
         try {
-            const response = await fetch('http://localhost:3000/garage', {
+            const response = await fetch('http://127.0.0.1:3000/garage', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -41,7 +41,7 @@ class Loader {
 
     static async getCar(id: number) {
         try {
-            const response = await fetch(`http://localhost:3000/garage/${id}`);
+            const response = await fetch(`http://127.0.0.1:3000/garage/${id}`);
 
             if (!response.ok) {
                 throw new Error('Car not found');
@@ -55,7 +55,7 @@ class Loader {
 
     static async deleteCar(id: number): Promise<void> {
         try {
-            const response = await fetch(`http://localhost:3000/garage/${id}`, {
+            const response = await fetch(`http://127.0.0.1:3000/garage/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -73,7 +73,7 @@ class Loader {
     static async switchToDriveMode(id: number) {
         try {
             const response = await fetch(
-                `http://localhost:3000/engine?id=${id}&status=drive`,
+                `http://127.0.0.1:3000/engine?id=${id}&status=drive`,
                 {
                     method: 'PATCH',
                 }
@@ -117,7 +117,7 @@ class Loader {
     ): Promise<{ velocity: number; distance: number }> {
         try {
             const response = await fetch(
-                `http://localhost:3000/engine/?id=${id}&status=${status}`,
+                `http://127.0.0.1:3000/engine/?id=${id}&status=${status}`,
                 {
                     method: 'PATCH',
                 }
@@ -137,7 +137,7 @@ class Loader {
 
     static async updateCar(id: number, name: string, color: string) {
         try {
-            const response = await fetch(`http://localhost:3000/garage/${id}`, {
+            const response = await fetch(`http://127.0.0.1:3000/garage/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
