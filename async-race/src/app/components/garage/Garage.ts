@@ -49,6 +49,8 @@ class Garage {
 
     winnerCar: Car | undefined = undefined; // Represents the winner car of the race.
 
+    isRacing: boolean = false; //
+
     constructor() {
         this.view = this.createGarageView();
         if (!this.view.map) {
@@ -64,11 +66,10 @@ class Garage {
     }
 
     /**
-   * Handler function for delete a car.
-
-   */
-    deleteCarHandler = async () => {
-        await this.updateView();
+     * Handler function for delete a car.
+     */
+    deleteCarHandler = () => {
+        this.updateView();
     };
 
     /**
@@ -253,22 +254,29 @@ class Garage {
      * Updates the winner's statistics and displays.
      */
     async startRace() {
+        this.isRacing = true;
+        this.updateButton();
         this.winnerName?.setTextContent('New Winner is...');
 
-        await Promise.all(this.carsInRace.map((car) => car.engineSwitch()));
-
         try {
+            await Promise.all(this.carsInRace.map((car) => car.engineSwitch()));
+
             const racePromises = this.carsInRace.map((car) =>
                 car.driveMode().then((result) => ({ car, result }))
             );
             const { car, result } = await Promise.any(racePromises);
+
             if (result === 200) {
                 this.winnerCar = car;
                 car.incrementWins();
                 this.raceEnd();
+                await Promise.allSettled(racePromises);
             }
         } catch (error) {
             console.error('Error during the race:', error);
+        } finally {
+            this.isRacing = false;
+            this.updateButton();
         }
     }
 
@@ -277,6 +285,19 @@ class Garage {
      */
     async resetRace() {
         await Promise.all(this.carsInRace.map((car) => car.engineSwitch()));
+        this.updateButton(true);
+    }
+
+    updateButton(reset: boolean = false) {
+        if (this.isRacing) {
+            this.btnStartRace?.setAttributes({ disabled: true });
+        } else {
+            this.btnResetRace?.deleteAttribute('disabled');
+        }
+        if (reset) {
+            this.btnStartRace?.deleteAttribute('disabled');
+            this.btnResetRace?.setAttributes({ disabled: true });
+        }
     }
 
     /**
@@ -311,6 +332,7 @@ class Garage {
         this.btnResetRace = button('reset-race', 'Reset Race', async () => {
             await this.resetRace();
         });
+        this.btnResetRace?.setAttributes({ disabled: true });
 
         const content = div(
             'garage-container',
@@ -329,7 +351,6 @@ class Garage {
                 }),
                 this.btnStartRace,
                 this.btnResetRace,
-
                 this.winnerName
             ),
 
