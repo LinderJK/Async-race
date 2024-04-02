@@ -90,7 +90,6 @@ class AppManager {
             this.garage.deleteCarHandler();
             Winners.deleteWinnerHandler(e);
         });
-        // document.addEventListener('deleteCar', );
         document.addEventListener('selectCar', this.garage.selectCarHandler);
         document.addEventListener('endRace', Winners.endRaceHandler);
     }
