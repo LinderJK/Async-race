@@ -97,10 +97,8 @@ class Winners {
         return tableElem;
     }
 
-    // eslint-disable-next-line class-methods-use-this
     createView() {
         this.table = tbody();
-
         const content = div(
             'winners-container',
             h1('winners-title', 'Winners'),
