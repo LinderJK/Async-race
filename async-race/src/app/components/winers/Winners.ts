@@ -11,8 +11,8 @@ import {
 } from '../../page/components/BaseComponents';
 import type { IComponent, PageView } from '../../types/components-types';
 import type { WinnerData } from '../../types/data-types';
-import WinnerLoader from '../../services/winner-loader';
-import Loader from '../../services/loader';
+import WinnerLoader from '../../services/winners-loader';
+import CarsLoader from '../../services/cars-loader';
 import Car from '../car/Car';
 import timeToSeconds from '../../utils/timeToSeconds';
 
@@ -84,7 +84,7 @@ class Winners {
         if (!id) {
             return emptyElem;
         }
-        const car = await Loader.getCar(id);
+        const car = await CarsLoader.getCar(id);
         const newCar = new Car(car);
         const tableElem = tr(
             'table-elem',

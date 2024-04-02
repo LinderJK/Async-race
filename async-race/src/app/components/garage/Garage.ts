@@ -14,7 +14,7 @@ import {
 } from '../../types/components-types';
 import { CarsData } from '../../types/data-types';
 import Car from '../car/Car';
-import Loader from '../../services/loader';
+import CarsLoader from '../../services/cars-loader';
 import getRandomColor from '../../utils/getRandomColor';
 import getRandomCarName from '../../utils/getRandomCarName';
 
@@ -88,11 +88,11 @@ class Garage {
 
     /**
      * Asynchronously updates the view of the garage.
-     * Fetches the latest garage data using Loader.loadGarageData,
+     * Fetches the latest garage data using CarsLoader.loadGarageData,
      * updates the display with the retrieved data, and updates pagination buttons.
      */
     async updateView() {
-        const data = await Loader.loadGarageData();
+        const data = await CarsLoader.loadGarageData();
         this.carsInRace = [];
         this.carsData = data;
 
@@ -164,7 +164,7 @@ class Garage {
     /**
      * Asynchronously handles the addition of a new car.
      * Retrieves color and name input values, validates inputs,
-     * and attempts to add a new car via Loader.addCar.
+     * and attempts to add a new car via CarsLoader.addCar.
      */
     async handleAddCar() {
         const colorInput = this.inputs?.get('color-car') as IInput;
@@ -178,7 +178,7 @@ class Garage {
         }
 
         try {
-            const carData = await Loader.addCar(name, color);
+            const carData = await CarsLoader.addCar(name, color);
             if (this.carsNumbers <= this.carsPerPage) {
                 const car = new Car(carData);
                 const carView = car.createView();
@@ -195,7 +195,7 @@ class Garage {
     /**
      * Asynchronously handles the update a car.
      * Retrieves color and name input values, validates inputs,
-     * and attempts to update the current cars data via Loader.updateCar.
+     * and attempts to update the current cars data via CarsLoader.updateCar.
      */
     async handleUpdateCar() {
         const colorInput = this.inputs?.get('color-car') as IInput;
@@ -210,7 +210,7 @@ class Garage {
         }
 
         try {
-            await Loader.updateCar(this.currentCar.id, name, color);
+            await CarsLoader.updateCar(this.currentCar.id, name, color);
         } catch (error) {
             console.error('Error update car:', error);
         }
@@ -221,7 +221,7 @@ class Garage {
     /**
      * Asynchronously creates random cars and adds them to the garage.
      * Generates a specified number of random cars with random colors and names.
-     * Adds each generated car to the garage via Loader.addCar asynchronously.
+     * Adds each generated car to the garage via CarsLoader.addCar asynchronously.
      */
     async createRandomCars() {
         const newCars = [];
@@ -235,7 +235,7 @@ class Garage {
 
         const promises = newCars.map(async (car) => {
             try {
-                await Loader.addCar(car.name, car.color);
+                await CarsLoader.addCar(car.name, car.color);
             } catch (error) {
                 console.error('Error creating car:', error);
             }

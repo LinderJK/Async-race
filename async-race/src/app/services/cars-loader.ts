@@ -1,6 +1,6 @@
 import { CarData, CarsData } from '../types/data-types';
 
-class Loader {
+class CarsLoader {
     static async loadGarageData(): Promise<CarsData> {
         try {
             const response = await fetch('http://127.0.0.1:3000/garage');
@@ -158,4 +158,4 @@ class Loader {
     }
 }
 
-export default Loader;
+export default CarsLoader;

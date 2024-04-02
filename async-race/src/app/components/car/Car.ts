@@ -4,7 +4,7 @@ import { button, div, image, p } from '../../page/components/BaseComponents';
 import FlagSvg from '../../../assets/flag.svg';
 import CarSvg from '../../../assets/car.svg';
 import { ComponentMap, IComponent } from '../../types/components-types';
-import Loader from '../../services/loader';
+import CarsLoader from '../../services/cars-loader';
 import Button from '../../page/components/button/button';
 import ObjectComponent from '../../page/components/object/object';
 
@@ -89,7 +89,7 @@ class Car {
      */
     async delete() {
         try {
-            await Loader.deleteCar(this.id);
+            await CarsLoader.deleteCar(this.id);
             const deleteCarEvent = new CustomEvent('deleteCar', {
                 detail: { deletedCar: this },
             });
@@ -104,7 +104,10 @@ class Car {
      * Updates the engine status and UI elements accordingly.
      */
     async engineSwitch() {
-        this.params = await Loader.toggleEngine(this.id, this.nextEngineStatus);
+        this.params = await CarsLoader.toggleEngine(
+            this.id,
+            this.nextEngineStatus
+        );
 
         if (this.nextEngineStatus === 'started') {
             this.nextEngineStatus = 'stopped';
@@ -139,7 +142,7 @@ class Car {
         let driveStatus;
 
         try {
-            driveStatus = await Loader.switchToDriveMode(this.id);
+            driveStatus = await CarsLoader.switchToDriveMode(this.id);
         } catch (error) {
             this.isAnimation = false;
             return Promise.reject(driveStatus);
