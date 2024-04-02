@@ -17,6 +17,7 @@ import Car from '../car/Car';
 import Loader from '../../services/loader';
 import getRandomColor from '../../utils/getRandomColor';
 import getRandomCarName from '../../utils/getRandomCarName';
+import Winners from '../winers/Winners';
 
 class Garage {
     view: PageView; // View of the garage page.
@@ -287,6 +288,9 @@ class Garage {
         this.winnerName?.setTextContent(
             `Car ${this.winnerCar?.Name} wins the race!!!`
         );
+        if (this.winnerCar) {
+            Winners.setWinner(this.winnerCar);
+        }
     }
 
     // async setWinner() {
