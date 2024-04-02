@@ -11,46 +11,58 @@ import {
 } from '../../page/components/BaseComponents';
 import type { IComponent, PageView } from '../../types/components-types';
 import type { WinnerData } from '../../types/data-types';
-import Car from '../car/Car';
 import WinnerLoader from '../../services/winner-loader';
 import Loader from '../../services/loader';
+import Car from '../car/Car';
 
 class Winners {
     view: PageView;
 
     table: IComponent | undefined = undefined;
 
-    // currentWinner: Car | undefined = undefined;
-
-    private static currentWinner: Car | undefined;
+    // currentWinner: Car | undefined;
 
     constructor() {
         this.view = this.createView();
         this.updateView();
     }
 
-    static async setWinner(car: Car) {
-        this.currentWinner = car;
-        const winnerInTable = await this.checkWinner(car.Id);
+    // eslint-disable-next-line class-methods-use-this
+    deleteWinnerHandler: EventListener = async (event: Event) => {
+        const customEvent = event as CustomEvent;
+        const { deletedCar } = customEvent.detail;
+        console.log(deletedCar.id, 'ID TO DELEEEE');
+        await WinnerLoader.deleteWinner(deletedCar.id);
+    };
+
+    endRaceHandler: EventListener = async (event: Event) => {
+        const customEvent = event as CustomEvent;
+        const { winnerCar } = customEvent.detail;
+        await this.setWinner(winnerCar);
+    };
+
+    async setWinner(car: Car) {
+        const winnerInTable = await WinnerLoader.getWinner(car.Id);
         if (winnerInTable) {
+            const wins = winnerInTable.wins + car.winsNumbers;
+            const bestTime =
+                winnerInTable.time > this.timeToSeconds(car.raceTime)
+                    ? winnerInTable.time
+                    : this.timeToSeconds(car.raceTime);
+
             await WinnerLoader.updateWinner(car.Id, {
-                wins: car.winsNumbers,
-                time: car.raceTime,
+                wins,
+                time: bestTime,
             });
         } else {
             await WinnerLoader.createWinner({
                 id: car.Id,
                 wins: car.winsNumbers,
-                time: car.raceTime,
+                time: this.timeToSeconds(car.raceTime),
             });
         }
     }
 
-    static checkWinner(id: number) {
-        return WinnerLoader.getWinner(id);
-    }
-
-    // eslint-disable-next-line class-methods-use-this
     async updateView() {
         this.table?.deleteChildren();
         let winners: IComponent[] = [];
@@ -66,14 +78,19 @@ class Winners {
         this.table?.appendChildren(winners);
     }
 
-    static timeToSeconds(milliseconds: number): number {
-        const seconds: number = milliseconds / 1000;
-        return Math.round(seconds * 100) / 100;
+    // eslint-disable-next-line class-methods-use-this
+    timeToSeconds(milliseconds: number): number {
+        return Number((milliseconds / 1000).toFixed(2));
     }
 
     // eslint-disable-next-line class-methods-use-this
     async drawWinner(data: WinnerData) {
         const { id, wins, time } = data;
+        console.log(id, wins, time, 'WINNERS data');
+        const emptyElem = tr('');
+        if (!id) {
+            return emptyElem;
+        }
         const car = await Loader.getCar(id);
         const newCar = new Car(car);
         const tableElem = tr(
@@ -82,7 +99,7 @@ class Winners {
             td('table-elem__image', '', div('', newCar.carSvgObj)),
             td('table-elem__name', `${car.name}`),
             td('table-elem__wins-count', `${wins}`),
-            td('table-elem__best-time', `${Winners.timeToSeconds(time)}`)
+            td('table-elem__best-time', `${time}`)
         );
         return tableElem;
     }
@@ -94,7 +111,6 @@ class Winners {
         const content = div(
             'winners-container',
             h1('winners-title', 'Winners'),
-            // this.table,
             table(
                 'table table-warning table-striped winners-table',
                 thead(
