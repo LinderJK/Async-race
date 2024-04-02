@@ -49,7 +49,7 @@ class Garage {
 
     winnerCar: Car | undefined = undefined; // Represents the winner car of the race.
 
-    isRacing: boolean = false; //
+    isRacing: boolean = false; // Represents status of the race.
 
     constructor() {
         this.view = this.createGarageView();
@@ -309,7 +309,7 @@ class Garage {
             `Car ${this.winnerCar?.Name} wins the race!!!`
         );
         if (this.winnerCar) {
-            const endRaceEvent = new CustomEvent('endRace', {
+            const endRaceEvent = new CustomEvent('endRaceEvent', {
                 detail: { winnerCar: this.winnerCar },
             });
             document.dispatchEvent(endRaceEvent);

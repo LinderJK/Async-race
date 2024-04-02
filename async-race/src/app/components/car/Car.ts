@@ -52,6 +52,42 @@ class Car {
         this.componentMap = this.view.getAllChildrenMap();
     }
 
+    get Id() {
+        return this.id;
+    }
+
+    set Id(id: number) {
+        this.id = id;
+    }
+
+    get Name() {
+        return this.name;
+    }
+
+    set Name(name: string) {
+        this.name = name;
+    }
+
+    get Color() {
+        return this.color;
+    }
+
+    set Color(color: string) {
+        this.color = color;
+    }
+
+    get Time(): number {
+        return this.timeInRace;
+    }
+
+    get Wins() {
+        return this.winsCount;
+    }
+
+    incrementWins(): void {
+        this.winsCount += 1;
+    }
+
     /**
      * Creates an SVG object for the cars image.
      * Sets the color of the SVG based on the cars color property.
@@ -77,7 +113,7 @@ class Car {
      * Dispatches a custom event indicating that the car has been selected.
      */
     select() {
-        const selectCarEvent = new CustomEvent('selectCar', {
+        const selectCarEvent = new CustomEvent('selectCarEvent', {
             detail: { selectedCar: this },
         });
         document.dispatchEvent(selectCarEvent);
@@ -90,7 +126,7 @@ class Car {
     async delete() {
         try {
             await CarsLoader.deleteCar(this.id);
-            const deleteCarEvent = new CustomEvent('deleteCar', {
+            const deleteCarEvent = new CustomEvent('deleteCarEvent', {
                 detail: { deletedCar: this },
             });
             document.dispatchEvent(deleteCarEvent);
@@ -260,42 +296,6 @@ class Car {
         carView.setAttributes({ id: `${this.id}` });
 
         return carView;
-    }
-
-    get Id() {
-        return this.id;
-    }
-
-    set Id(id: number) {
-        this.id = id;
-    }
-
-    get Name() {
-        return this.name;
-    }
-
-    set Name(name: string) {
-        this.name = name;
-    }
-
-    get Color() {
-        return this.color;
-    }
-
-    set Color(color: string) {
-        this.color = color;
-    }
-
-    get raceTime(): number {
-        return this.timeInRace;
-    }
-
-    incrementWins(): void {
-        this.winsCount += 1;
-    }
-
-    get winsNumbers() {
-        return this.winsCount;
     }
 }
 

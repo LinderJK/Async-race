@@ -79,19 +79,21 @@ class AppManager {
         }
         this.root.append(this.mainPageView.element);
         this.renderGarage();
-        // this.renderWinners();
         this.buttonGarage?.addListener('click', () => this.renderGarage());
         this.buttonWinners?.addListener('click', () => this.renderWinners());
         this.setupObserver();
     }
 
     setupObserver() {
-        document.addEventListener('deleteCar', (e) => {
+        document.addEventListener('deleteCarEvent', (evt) => {
             this.garage.deleteCarHandler();
-            Winners.deleteWinnerHandler(e);
+            Winners.deleteWinnerHandler(evt);
         });
-        document.addEventListener('selectCar', this.garage.selectCarHandler);
-        document.addEventListener('endRace', Winners.endRaceHandler);
+        document.addEventListener(
+            'selectCarEvent',
+            this.garage.selectCarHandler
+        );
+        document.addEventListener('endRaceEvent', Winners.endRaceHandler);
     }
 }
 

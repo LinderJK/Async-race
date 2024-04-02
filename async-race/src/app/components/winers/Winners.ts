@@ -45,12 +45,12 @@ class Winners {
     static async setWinner(car: Car) {
         const winnerInTable = await WinnerLoader.getWinner(car.Id);
         if (winnerInTable) {
-            const wins = winnerInTable.wins + car.winsNumbers;
+            const wins = winnerInTable.wins + car.Wins;
 
             const bestTime =
-                winnerInTable.time > timeToSeconds(car.raceTime)
+                winnerInTable.time > timeToSeconds(car.Time)
                     ? winnerInTable.time
-                    : timeToSeconds(car.raceTime);
+                    : timeToSeconds(car.Time);
 
             await WinnerLoader.updateWinner(car.Id, {
                 wins,
@@ -59,20 +59,18 @@ class Winners {
         } else {
             await WinnerLoader.createWinner({
                 id: car.Id,
-                wins: car.winsNumbers,
-                time: timeToSeconds(car.raceTime),
+                wins: car.Wins,
+                time: timeToSeconds(car.Time),
             });
         }
     }
 
     async updateView() {
         this.table?.deleteChildren();
-        let winners: IComponent[] = [];
         const data = await WinnerLoader.getWinners();
-        winners = await Promise.all(
+        const winners = await Promise.all(
             data.map(async (elem) => {
-                const winner = await Winners.drawWinner(elem);
-                return winner;
+                return Winners.drawWinner(elem);
             })
         );
         this.table?.appendChildren(winners);
@@ -86,7 +84,7 @@ class Winners {
         }
         const car = await CarsLoader.getCar(id);
         const newCar = new Car(car);
-        const tableElem = tr(
+        return tr(
             'table-elem',
             td('table-elem__number', `${id}`),
             td('table-elem__image', '', div('', newCar.carSvgObj)),
@@ -94,7 +92,6 @@ class Winners {
             td('table-elem__wins-count', `${wins}`),
             td('table-elem__best-time', `${time}`)
         );
-        return tableElem;
     }
 
     createView() {
