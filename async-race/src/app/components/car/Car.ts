@@ -141,7 +141,6 @@ class Car {
             this.isAnimation = false;
             return Promise.reject(driveStatus);
         }
-        this.btnStopEngine!.deleteAttribute('disabled');
 
         return driveStatus;
     }
@@ -206,7 +205,12 @@ class Car {
     createView() {
         this.btnStartEngine = button('btn-start-engine', 'A', async () => {
             await this.engineSwitch();
-            await this.driveMode();
+            try {
+                await this.driveMode();
+            } catch (e) {
+                console.log(e);
+            }
+            this.btnStopEngine!.deleteAttribute('disabled');
         });
         this.btnStopEngine = button('btn-start-drive', 'B', async () => {
             await this.engineSwitch();
