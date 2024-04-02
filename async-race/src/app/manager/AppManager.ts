@@ -86,13 +86,13 @@ class AppManager {
     }
 
     setupObserver() {
-        document.addEventListener('deleteCar', this.garage.deleteCarHandler);
-        document.addEventListener(
-            'deleteCar',
-            this.winners.deleteWinnerHandler
-        );
+        document.addEventListener('deleteCar', (e) => {
+            this.garage.deleteCarHandler();
+            Winners.deleteWinnerHandler(e);
+        });
+        // document.addEventListener('deleteCar', );
         document.addEventListener('selectCar', this.garage.selectCarHandler);
-        document.addEventListener('endRace', this.winners.endRaceHandler);
+        document.addEventListener('endRace', Winners.endRaceHandler);
     }
 }
 
