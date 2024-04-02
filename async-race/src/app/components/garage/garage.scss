@@ -3,16 +3,19 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+
 }
 
 .garage {
   padding: 10px;
   background-color: #565e64;
+
 }
 
 .winner-name {
   margin: 0;
   font-size: 1.6rem;
+
 }
 
 .config {
@@ -22,12 +25,14 @@
   margin-bottom: 20px;
   gap: 20px;
   min-height: 60px;
+
 }
 
 .car-list {
   display: flex;
   flex-direction: column;
   gap: 10px;
+
 }
 
 .pagination-container {
@@ -39,6 +44,7 @@
 
   p {
     margin: 0;
+
   }
 }
 

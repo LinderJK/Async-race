@@ -60,14 +60,20 @@ class Garage {
         this.title = this.view.map.get('garage-title');
 
         this.updateView();
-        // this.setupObserver();
         this.updatePaginationButtons();
     }
 
+    /**
+   * Handler function for delete a car.
+
+   */
     deleteCarHandler = async () => {
         await this.updateView();
     };
 
+    /**
+     * Handler function for select a car.
+     */
     selectCarHandler: EventListener = (event: Event) => {
         const customEvent = event as CustomEvent;
         const { selectedCar } = customEvent.detail;
@@ -79,28 +85,6 @@ class Garage {
             ?.get('name-car')
             ?.setAttributes({ value: `${this.currentCar?.Name}` });
     };
-
-    /**
-     * Sets up event listeners.
-     */
-    // private setupObserver() {
-    //     const deleteCarHandler = async () => {
-    //         await this.updateView();
-    //     };
-    //     const selectCarHandler: EventListener = (event: Event) => {
-    //         const customEvent = event as CustomEvent;
-    //         const { selectedCar } = customEvent.detail;
-    //         this.currentCar = selectedCar;
-    //         this.inputs
-    //             ?.get('color-car')
-    //             ?.setAttributes({ value: `${this.currentCar?.Color}` });
-    //         this.inputs
-    //             ?.get('name-car')
-    //             ?.setAttributes({ value: `${this.currentCar?.Name}` });
-    //     };
-    //     document.addEventListener('deleteCar', deleteCarHandler);
-    //     document.addEventListener('selectCar', selectCarHandler);
-    // }
 
     /**
      * Asynchronously updates the view of the garage.
@@ -282,7 +266,6 @@ class Garage {
                 this.winnerCar = car;
                 car.incrementWins();
                 this.raceEnd();
-                // this.setWinner();
             }
         } catch (error) {
             console.error('Error during the race:', error);
@@ -297,13 +280,13 @@ class Garage {
     }
 
     /**
-     *
+     * Handles the end of the race.
+     * Sets the winner name and dispatches an 'endRace' event with the winning car details.
      */
     private raceEnd() {
         this.winnerName?.setTextContent(
             `Car ${this.winnerCar?.Name} wins the race!!!`
         );
-        console.log('ADADADAAD WINNER TIME', this.winnerCar?.raceTime);
         if (this.winnerCar) {
             const endRaceEvent = new CustomEvent('endRace', {
                 detail: { winnerCar: this.winnerCar },
@@ -311,11 +294,6 @@ class Garage {
             document.dispatchEvent(endRaceEvent);
         }
     }
-
-    // async setWinner() {
-    //     console.log('setWinner');
-    //     console.log(this.winnerCar?.raceTime);
-    // }
 
     /**
      * Creates the view for the garage.
