@@ -90,7 +90,11 @@ class Car {
     async delete() {
         try {
             await Loader.deleteCar(this.id);
-            document.dispatchEvent(new Event('deleteCar'));
+            const deleteCarEvent = new CustomEvent('deleteCar', {
+                detail: { deletedCar: this },
+            });
+            document.dispatchEvent(deleteCarEvent);
+            // document.dispatchEvent(new Event('deleteCar'),);
         } catch (error) {
             console.error(error);
         }
