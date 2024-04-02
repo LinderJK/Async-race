@@ -2,7 +2,7 @@ import { IComponent } from '../../types/components-types';
 
 interface IComponentConstructor {
     tagName?: keyof HTMLElementTagNameMap | string;
-    className: string;
+    className?: string;
     textContent?: string;
     attributes?: {
         [key: string]: string;
