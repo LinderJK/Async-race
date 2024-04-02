@@ -94,7 +94,6 @@ class Car {
                 detail: { deletedCar: this },
             });
             document.dispatchEvent(deleteCarEvent);
-            // document.dispatchEvent(new Event('deleteCar'),);
         } catch (error) {
             console.error(error);
         }
@@ -212,7 +211,7 @@ class Car {
             try {
                 await this.driveMode();
             } catch (e) {
-                console.log(e);
+                console.error(e);
             }
             this.btnStopEngine!.deleteAttribute('disabled');
         });

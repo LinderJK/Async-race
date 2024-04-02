@@ -18,9 +18,6 @@
     flex-direction: row;
     border-bottom: 2px dashed #fff;
 
-    &__control {
-    }
-
     &__draw {
       display: flex;
       flex: 1;
@@ -46,8 +43,10 @@
 .image {
   width: 100%;
   height: 100%;
+
 }
 
-.btn-start-engine--sucsess {
+.btn-start-engine--success {
   background-color: green;
+
 }
