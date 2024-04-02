@@ -17,7 +17,6 @@ import Car from '../car/Car';
 import Loader from '../../services/loader';
 import getRandomColor from '../../utils/getRandomColor';
 import getRandomCarName from '../../utils/getRandomCarName';
-import Winners from '../winers/Winners';
 
 class Garage {
     view: PageView; // View of the garage page.
@@ -61,31 +60,47 @@ class Garage {
         this.title = this.view.map.get('garage-title');
 
         this.updateView();
-        this.setupObserver();
+        // this.setupObserver();
         this.updatePaginationButtons();
     }
+
+    deleteCarHandler = async () => {
+        await this.updateView();
+    };
+
+    selectCarHandler: EventListener = (event: Event) => {
+        const customEvent = event as CustomEvent;
+        const { selectedCar } = customEvent.detail;
+        this.currentCar = selectedCar;
+        this.inputs
+            ?.get('color-car')
+            ?.setAttributes({ value: `${this.currentCar?.Color}` });
+        this.inputs
+            ?.get('name-car')
+            ?.setAttributes({ value: `${this.currentCar?.Name}` });
+    };
 
     /**
      * Sets up event listeners.
      */
-    private setupObserver() {
-        const deleteCarHandler = async () => {
-            await this.updateView();
-        };
-        const selectCarHandler: EventListener = (event: Event) => {
-            const customEvent = event as CustomEvent;
-            const { selectedCar } = customEvent.detail;
-            this.currentCar = selectedCar;
-            this.inputs
-                ?.get('color-car')
-                ?.setAttributes({ value: `${this.currentCar?.Color}` });
-            this.inputs
-                ?.get('name-car')
-                ?.setAttributes({ value: `${this.currentCar?.Name}` });
-        };
-        document.addEventListener('deleteCar', deleteCarHandler);
-        document.addEventListener('selectCar', selectCarHandler);
-    }
+    // private setupObserver() {
+    //     const deleteCarHandler = async () => {
+    //         await this.updateView();
+    //     };
+    //     const selectCarHandler: EventListener = (event: Event) => {
+    //         const customEvent = event as CustomEvent;
+    //         const { selectedCar } = customEvent.detail;
+    //         this.currentCar = selectedCar;
+    //         this.inputs
+    //             ?.get('color-car')
+    //             ?.setAttributes({ value: `${this.currentCar?.Color}` });
+    //         this.inputs
+    //             ?.get('name-car')
+    //             ?.setAttributes({ value: `${this.currentCar?.Name}` });
+    //     };
+    //     document.addEventListener('deleteCar', deleteCarHandler);
+    //     document.addEventListener('selectCar', selectCarHandler);
+    // }
 
     /**
      * Asynchronously updates the view of the garage.
@@ -266,7 +281,7 @@ class Garage {
             if (result === 200) {
                 this.winnerCar = car;
                 car.incrementWins();
-                this.updateWinner();
+                this.raceEnd();
                 // this.setWinner();
             }
         } catch (error) {
@@ -282,14 +297,18 @@ class Garage {
     }
 
     /**
-     * Updates the winners name display with the name of the winning car.
+     *
      */
-    private updateWinner() {
+    private raceEnd() {
         this.winnerName?.setTextContent(
             `Car ${this.winnerCar?.Name} wins the race!!!`
         );
+        console.log('ADADADAAD WINNER TIME', this.winnerCar?.raceTime);
         if (this.winnerCar) {
-            Winners.setWinner(this.winnerCar);
+            const endRaceEvent = new CustomEvent('endRace', {
+                detail: { winnerCar: this.winnerCar },
+            });
+            document.dispatchEvent(endRaceEvent);
         }
     }
 

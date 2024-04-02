@@ -82,6 +82,17 @@ class AppManager {
         // this.renderWinners();
         this.buttonGarage?.addListener('click', () => this.renderGarage());
         this.buttonWinners?.addListener('click', () => this.renderWinners());
+        this.setupObserver();
+    }
+
+    setupObserver() {
+        document.addEventListener('deleteCar', this.garage.deleteCarHandler);
+        document.addEventListener(
+            'deleteCar',
+            this.winners.deleteWinnerHandler
+        );
+        document.addEventListener('selectCar', this.garage.selectCarHandler);
+        document.addEventListener('endRace', this.winners.endRaceHandler);
     }
 }
 
